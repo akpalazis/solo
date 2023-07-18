@@ -3,6 +3,8 @@ import Trips from "./Trips";
 import AddTrip from "./AddTrip"
 import Dis from "./Dis"
 import io from "socket.io-client";
+import {login} from "../helpers/actions";
+import {connect} from "react-redux";
 
 class User extends React.Component {
   constructor(props) {
@@ -23,6 +25,7 @@ class User extends React.Component {
   setNotifications = (notifications) => {
     this.setState({notifications:notifications})
   }
+
   manipulateAlerts= (data) => {
     const unreadNotifications = data.filter((notification) => !notification.is_read);
     const n = unreadNotifications.length;
@@ -83,6 +86,25 @@ class User extends React.Component {
       this.setState({ page: 'discussion' });
   }
 
+  onLogout = () => {
+    fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle any data from the response if needed
+      })
+      .catch((error) => {
+        console.error('Logout error:', error);
+        // Handle any errors that occurred during the logout request
+      });
+    this.props.login()
+  };
+
   renderUser() {
     if (this.state.page === 'welcome') {
       return (
@@ -101,7 +123,7 @@ class User extends React.Component {
           </div>
           Discussion
         </button>
-        <button onClick={this.props.onLogout} className='submit-button'>Logout</button>
+        <button onClick={this.onLogout} className='submit-button'>Logout</button>
       </div>
     </div>
       )
@@ -143,4 +165,14 @@ class User extends React.Component {
   }
 }
 
-export default User;
+const mapStateToProps = (state) => {
+  return {
+    page: state.page,
+  };
+};
+
+const mapDispatchToProps = {
+  login
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(User);

@@ -1,4 +1,6 @@
 import React from "react";
+import {login, registerSuccess} from "../helpers/actions";
+import {connect} from "react-redux";
 
 class SingUp extends React.Component{
   state = {
@@ -52,7 +54,7 @@ class SingUp extends React.Component{
           this.onUserNameError()
         }
         if (data.message === "Account Created Successfully") {
-          this.props.registerHandler()
+          this.props.registerSuccess()
         }
       })
       .catch((error) => {
@@ -90,7 +92,7 @@ class SingUp extends React.Component{
           </div>
           <div>
               <button onClick = {this.sendSingUpRequest}>SignUp</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
+            <button onClick={this.props.login}>Cancel</button>
           </div>
         </form>
         </div>
@@ -102,5 +104,17 @@ class SingUp extends React.Component{
     )
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    page: state.page,
+  };
+};
 
-export default SingUp;
+const mapDispatchToProps = {
+  registerSuccess,
+  login
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SingUp);
+
+

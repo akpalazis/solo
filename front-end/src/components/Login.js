@@ -1,4 +1,6 @@
 import React from "react";
+import {signup, userPage} from "../helpers/actions"
+import {connect} from "react-redux";
 
 class Login extends React.Component {
   state = {
@@ -39,7 +41,7 @@ class Login extends React.Component {
       .then((data) => {
         // Handle the response from the backend
         if (data.message === 'Login successful') {
-          this.props.onUserPage()
+          this.props.userPage()
         } else {
           this.onError("Username or Password is invalid... Try again!")
         }
@@ -49,7 +51,7 @@ class Login extends React.Component {
     })
   };
 
-  renderLoginForm(){
+  render() {
     return(
       <div>
         <h2>Login Page</h2>
@@ -79,18 +81,25 @@ class Login extends React.Component {
           </div>
           <div>
             <button onClick={this.sendLoginRequest}>Login</button>
-            <button onClick={this.props.onSingUp}>SignUp</button>
+            <button onClick={this.props.signup}>SignUp</button>
           </div>
         </form>
       </div>
     );
   }
-
-  render() {
-    return(
-      this.renderLoginForm()
-    )
-  }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    page: state.page,
+  };
+};
+
+const mapDispatchToProps = {
+  signup,
+  userPage,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+
+
