@@ -11,3 +11,45 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.user-welcome-container {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-message {
+  margin-right: 10px;
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.notification-icon .fa-bell {
+  margin-right: 5px;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 10px; /* Adjust the gap between buttons as needed */
+}
+
+.notification-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+/* Optionally, add some styling to the buttons */
+.buttons-container button {
+  padding: 8px 12px;
+  cursor: pointer;
+  border: none;
+}

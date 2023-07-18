@@ -5,7 +5,7 @@ import SingUp from "./components/SingUp";
 import "./App.css"
 class Select extends React.Component {
   state = {
-    page: ''
+    page: '',
   };
 
   handleStateChange = () => {
@@ -36,11 +36,7 @@ class Select extends React.Component {
   }
 
   userPage = () => {
-    const state = {
-      ...this.state,
-      ['page']:'userPage'
-    }
-    this.setState(state)
+    this.setState({page: 'userPage'})
   }
 
   checkSession = () => {
@@ -63,14 +59,18 @@ class Select extends React.Component {
     this.checkSession()
   }
 
+  onUser = (username) =>{
+    this.setState({user:username})
+  }
+
   render() {
     if (this.state.page === 'login') {
       return (
         <div className='ui segment'>
           <Login
             onUserPage = {this.userPage}
+            onSingUp ={this.handleStateChange}
           />
-          <button onClick={this.handleStateChange} className='submit-button'>Sign Up</button>
         </div>
       )
     }
@@ -79,8 +79,8 @@ class Select extends React.Component {
           <div className='ui segment'>
             <SingUp
               registerHandler={this.onRegister}
+              onCancel = {this.handleStateChange}
             />
-          <button onClick={this.handleStateChange}>Cancel</button>
           </div>
         )
     }
@@ -91,7 +91,6 @@ class Select extends React.Component {
               <Login
                 onUserPage = {this.userPage}
               />
-              <button onClick={this.handleStateChange} className='submit-button'>Sign Up</button>
           </div>
         )
     }
@@ -101,8 +100,8 @@ class Select extends React.Component {
           <h1>User Page</h1>
           <User
             onUserPage={this.userPage}
+            onLogout = {this.onLogout}
           />
-          <button onClick={this.onLogout} className='submit-button'>Logout</button>
         </div>
       )
     }

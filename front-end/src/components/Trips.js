@@ -7,11 +7,7 @@ class Trips extends React.Component {
   };
 
   addData = (data) => {
-    const state = {
-      ...this.state,
-      ['data']: data
-    }
-    this.setState(state)
+    this.setState({data : data})
   }
 
   checkSession = () => {
@@ -61,23 +57,25 @@ class Trips extends React.Component {
   render() {
     return (
       <div>
-        <h2>Welcome To Trip Planner</h2>
-        <h4>{this.state.errorMessage}</h4>
-        <div className="card-container">
-          {this.state.data.map((trip) => (
-            <div key={trip.id} className="card">
-              <button
-                className="delete-button"
-                onClick={() => this.deleteTrip(trip.id)}
-              >
-              x
-              </button>
-              <p className="card-field">Destination: {trip.destination}</p>
-            </div>
-          ))}
-        </div>
-        <button onClick={this.props.toWelcomePage}>Go Back</button>
-      </div>
+      <h2>Welcome To Trip Planner</h2>
+      <h4>{this.state.errorMessage}</h4>
+      <form>
+          <div>
+            {
+              this.state.data.map((trip) => (
+              <div key={trip.id} className="card">
+                <div className="destination">
+                  <p>
+                    Destination: {trip.destination}
+                    <label onClick={() => this.deleteTrip(trip.id)}> [x] </label>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={this.props.toWelcomePage}>Go Back</button>
+      </form>
+    </div>
     )
   }
 }

@@ -18,12 +18,11 @@ class Login extends React.Component {
   };
 
   onError = (msg) => {
-    const state = {
-    ...this.state,
-      ['password']:"",
-      ['errorMessage']: msg
-    }
-    this.setState(state);
+    this.setState(
+      {password:"",
+            errorMessage:msg
+            }
+      );
   };
 
   sendLoginRequest = (event) => {
@@ -55,32 +54,33 @@ class Login extends React.Component {
       <div>
         <h2>Login Page</h2>
         <h3>{this.state.errorMessage}</h3>
-        <form onSubmit={this.sendLoginRequest}>
+        <form>
           <div>
-          <label>Username:</label>
+            <label className>Username:</label>
           </div>
-            <div>
+          <div>
             <input
               placeholder="Username"
               name="username"
               value={this.state.username}
               onChange={this.onInputChange}
-              className='input'
             />
-            </div>
-                    <div>
-            <label>Password:</label>
-                      </div>
+          </div>
           <div>
-                      <input
-                placeholder="Password"
-                name="password"
-                value={this.state.password}
-                onChange={this.onInputChange}
-                className='input'
-              />
-                        </div>
-            <button type="submit" className='submit-button'>Login</button>
+            <label className>Password:</label>
+          </div>
+          <div>
+            <input
+              placeholder="Password"
+              name="password"
+              value={this.state.password}
+              onChange={this.onInputChange}
+            />
+          </div>
+          <div>
+            <button onClick={this.sendLoginRequest}>Login</button>
+            <button onClick={this.props.onSingUp}>SignUp</button>
+          </div>
         </form>
       </div>
     );

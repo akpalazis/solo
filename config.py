@@ -6,4 +6,4 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Secret key for session management and CSRF protection
 SECRET_KEY = 'abc'
-
+SESSION_TYPE = 'filesystem'

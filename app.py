@@ -1,19 +1,38 @@
-from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask import Flask, request, jsonify, session
+from flask_cors import CORS
+from flask_socketio import SocketIO, join_room, leave_room
+from models import db, User, Trip, Discussion, Comment, associate_trip_with_discussion, Notification
 
-from models import db, User, Trip, Discussion, Comment
-
-bcrypt = Bcrypt()
+b_crypt = Bcrypt()
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 # Initialize the database
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+
+class Socket(SocketIO):
+    def __init__(self, app):
+        super().__init__(app, cors_allowed_origins="*", manage_session=False)
+        self.on_event('subscribe_alert', self.subscribe_alert)
+        self.on_event('unsubscribe_alert', self.unsubscribe_alert)
+
+    def subscribe_alert(self, room_name):
+        join_room(room_name)
+
+    def unsubscribe_alert(self, room_name):
+        leave_room(room_name)
+
+    def new_alert(self):
+        socket_io.emit('new_alert', "new alert", room='alert')
+
+
+socket_io = Socket(app)
 
 
 def is_user_trip_exists(username, destination):
@@ -31,15 +50,30 @@ def is_trip_exists(destination, start_date, end_date):
         start_date=start_date,
         end_date=end_date
     ).first()
-
     return existing_trip is not None
+
+
+@app.route('/notifications', methods=['GET'])
+def notification():
+    user = User.query.filter_by(username=session['user']).first()
+    alerts = user.notifications
+    total = []
+    for alert in alerts:
+        total.append({
+            "id": alert.id,
+            "user_id": alert.user_id,
+            "destination": alert.destination,
+            "message": alert.message,
+            "is_read": alert.is_read
+        })
+    return jsonify(json_list=total)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "GET":
         if 'user' in session:
-            return jsonify({'message': 'Access granted'})
+            return jsonify({'message': 'Access granted', 'userId': session['user']})
         else:
             return jsonify({'message': 'Access denied'}), 401
     if request.method == "POST":
@@ -47,9 +81,10 @@ def login():
         username = data.get('username')
         password = data.get('password')
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.password, password):
+        if user and b_crypt.check_password_hash(user.password, password):
             session['user'] = username
-            return jsonify({'message': 'Login successful'}), 200
+            session['user_id'] = user.id
+            return jsonify({'message': 'Login successful', 'userId': session['user']}), 200
         else:
             # User does not exist or incorrect credentials, login failed
             return jsonify({'message': 'Login failed'}), 401
@@ -67,7 +102,7 @@ def sing_up():
         return jsonify({'message': 'User already exists'}), 409
 
     else:
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        hashed_password = b_crypt.generate_password_hash(password).decode('utf-8')
 
         user = User(username=username,
                     password=hashed_password)
@@ -115,29 +150,35 @@ def add_trip():
 
     user = User.query.filter_by(username=session['user']).first()  # Retrieve the user by username
     if user:
-        # Check if a discussion already exists for the destination
-        discussion = Discussion.query.filter_by(destination=destination).first()
-        if discussion:
-            # If a discussion exists, associate the trip with the existing discussion
-            new_trip = Trip(
-                user_id=user.id,
-                destination=destination,
-                discussion_id=discussion.id
-            )
-        else:
-            # If no discussion exists, create a new discussion and associate the trip with it
-            new_discussion = Discussion(destination=destination)
-            db.session.add(new_discussion)
-            db.session.commit()
-            new_trip = Trip(
-                user_id=user.id,
-                destination=destination,
-                discussion_id=new_discussion.id
-            )
-
+        new_trip = Trip(
+            user_id=user.id,
+            destination=destination,
+        )
         db.session.add(new_trip)  # Add the new trip to the session
-        db.session.commit()  # Commit the changes to the database
-
+        db.session.commit()  #
+        new_discussion = Discussion(
+            user_id=user.id,
+            destination=destination
+        )
+        db.session.add(new_discussion)
+        db.session.commit()
+        associate_trip_with_discussion(new_trip, new_discussion)
+        db.session.commit()
+        discussions = Discussion.query.filter_by(destination=destination).all()
+        if len(discussions) >= 2:
+            for discussion in discussions:
+                notification = Notification.query.filter_by(user_id=discussion.user_id,
+                                                            destination=discussion.destination).first()
+                if not notification:
+                    new_notification = Notification(
+                        user_id=discussion.user_id,
+                        destination=discussion.destination,
+                        message="New discussion",
+                        is_read=False
+                    )
+                    db.session.add(new_notification)
+                    db.session.commit()
+            socket_io.new_alert()
         return jsonify({'message': 'Trip added successful'}), 200
 
     return jsonify({'message': 'User not Found'}), 401
@@ -147,22 +188,18 @@ def add_trip():
 def get_user_dic():
     user = User.query.filter_by(username=session['user']).first()
     if user:
-        trips = user.trips  # Retrieve the trips associated with the user
-        trip_data = []
+        discussions = user.discussions  # Retrieve the trips associated with the user
+        discussion_data = []
 
-        for trip in trips:
-            discussion = trip.discussion
-            if discussion:
-                users = User.query.join(Trip).filter(Trip.discussion_id == discussion.id).all()
-                users_count = len(users)
-                comments = Comment.query.filter_by(discussion_id=discussion.id).all()
-                if users_count > 1:
-                    trip_data.append({
-                        'id': trip.id,
-                        'destination': trip.destination,
-                        'comments': [{"id": c.id, "msg": c.message} for c in comments]
-                    })
-        return jsonify(json_list=trip_data), 200
+        for discussion in discussions:
+            n_users = Discussion.query.filter_by(destination=discussion.destination).all()
+            if len(n_users) > 1:
+                discussion_data.append({
+                    'id': discussion.id,
+                    'destination': discussion.destination,
+                })
+        socket_io.new_alert()
+        return jsonify(json_list=discussion_data), 200
 
     return jsonify({'message': 'User not found'}), 404
 
@@ -170,14 +207,41 @@ def get_user_dic():
 @app.route('/deletetrip/<int:trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
     trip = Trip.query.get(trip_id)
-
+    discussion = Discussion.query.filter_by(user_id=trip.user_id, destination=trip.destination).first()
     if trip:
         db.session.delete(trip)
+        db.session.delete(discussion)
+        alerts = Notification.query.filter_by(destination=trip.destination).all()
+        if len(alerts) <= 2:
+            for alert in alerts:
+                db.session.delete(alert)
+        else:
+            alert = Notification.query.filter_by(user_id=trip.user_id).first()
+            db.session.delete(alert)
         db.session.commit()
+        socket_io.new_alert()
         return jsonify({'message': 'Trip deleted successfully'}), 200
     else:
         return jsonify({'message': 'Trip not found'}), 404
 
 
+@app.route('/markasread/<int:notification_id>', methods=['PUT'])
+def update_notification(notification_id):
+    # Find the notification in the database
+    notification = Notification.query.get(notification_id)
+    if not notification:
+        return jsonify({'error': 'Notification not found'}), 404
+
+    # Update the notification record
+    notification.is_read = True
+
+    # Save the changes to the database
+    db.session.commit()
+
+    # Optionally, you can return a response to the frontend to indicate the update was successful
+    socket_io.new_alert()
+    return jsonify({'message': 'Notification updated successfully'})
+
+
 if __name__ == '__main__':
-    app.run()
+    socket_io.run(app, debug=False)

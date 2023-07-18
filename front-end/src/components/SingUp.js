@@ -26,19 +26,6 @@ class SingUp extends React.Component{
     this.setState(state);
   };
 
-  onEmailError = () => {
-    const state =  Object.assign({}, this.state);
-    state.emailError = "Email already exist";
-    this.setState(state);
-  };
-
-  onConflictError = () => {
-    const state = Object.assign({},this.state);
-    state.userNameError = "Username already exists";
-    state.emailError = "Email already exist";
-    this.setState(state)
-  }
-
   clearErrors = () => {
     const state = Object.assign({},this.state);
     state.userNameError = "";
@@ -77,28 +64,35 @@ class SingUp extends React.Component{
     return (
         <div>
           <h2>Sign Up Page</h2>
+          <h3>{this.state.userNameError}</h3>
           <form>
-            <div>
-            <label>Username:</label>
+          <div>
+            <label className>Username:</label>
+          </div>
+          <div>
             <input
-              placeholder="username"
+              placeholder="Username"
               name="username"
               value={this.state.username}
               onChange={this.onInputSingUpChange}
             />
-            {this.state.userNameError}
-            </div>
-            <div>
-              <label>Password:</label>
+          </div>
+          <div>
+            <label>Password:</label>
+          </div>
+          <div>
             <input
-              placeholder="password"
+              placeholder="Password"
               name="password"
               value={this.state.password}
               onChange={this.onInputSingUpChange}
             />
-            </div>
-            <button type="submit" onClick = {this.sendSingUpRequest} className='submit-button'>Sign Up</button>
-          </form>
+          </div>
+          <div>
+              <button onClick = {this.sendSingUpRequest}>SignUp</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
+          </div>
+        </form>
         </div>
       );
   }

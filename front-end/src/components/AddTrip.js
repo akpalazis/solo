@@ -24,10 +24,7 @@ class AddTrip extends React.Component {
   addTrip = (event) => {
     event.preventDefault();
     const {
-      destination,
-      startDate,
-      description,
-      endDate
+      destination
     } = this.state;
 
     fetch('/addtrip', {
@@ -71,8 +68,10 @@ class AddTrip extends React.Component {
               required
             />
           </div>
+          <div>
           <button type="submit" onClick={this.addTrip}>Add Trip</button>
           <button onClick={this.props.toWelcomePage}>Go Back</button>
+          </div>
         </form>
       </div>
     );
