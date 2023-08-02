@@ -69,7 +69,7 @@ class Select extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    page: state.page,
+    page: state.login.page,
   };
 };
 

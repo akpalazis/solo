@@ -1,4 +1,6 @@
 import React from "react";
+import {welcome} from "../helpers/actions";
+import {connect} from "react-redux";
 
 class Trips extends React.Component {
   state = {
@@ -73,11 +75,15 @@ class Trips extends React.Component {
               </div>
             ))}
           </div>
-          <button onClick={this.props.toWelcomePage}>Go Back</button>
+          <button onClick={this.props.welcome}>Go Back</button>
       </form>
     </div>
     )
   }
 }
 
-export default Trips;
+const mapDispatchToProps = {
+  welcome,
+};
+
+export default connect(null, mapDispatchToProps)(Trips);

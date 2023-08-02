@@ -1,4 +1,6 @@
 import React from "react";
+import {welcome} from "../helpers/actions";
+import {connect} from "react-redux";
 
 class Dis extends React.Component {
   state = {
@@ -27,7 +29,6 @@ class Dis extends React.Component {
   }
 
   markDiscussionAsRead =(notification_id) =>{
-    console.log(notification_id)
     fetch(`/markasread/${notification_id}`, {
       method: 'PUT', // Assuming you use PUT method to update the discussion's is_read status
       })
@@ -47,12 +48,12 @@ class Dis extends React.Component {
         <h4>{this.state.errorMessage}</h4>
         <ul>
           {this.state.data.map((discussion, index) => {
-            const isUnread = !this.props.notifications[index].is_read;
+            const isUnread = !this.props.alerts[index].is_read;
             return (
               <li
                 key={discussion.id}
                 className={isUnread ? 'unread' : ''}
-                onClick={() => this.markDiscussionAsRead(this.props.notifications[index].id)}
+                onClick={() => this.markDiscussionAsRead(this.props.alerts[index].id)}
               >
                 <span style={{ fontWeight: isUnread ? 'bold' : 'normal' }}>
                   {discussion.destination}
@@ -61,10 +62,20 @@ class Dis extends React.Component {
             );
           })}
         </ul>
-        <button onClick={this.props.toWelcomePage}>Go Back</button>
+        <button onClick={this.props.welcome}>Go Back</button>
       </div>
     );
   }
 }
 
-export default Dis;
+const mapStateToProps = (state) => {
+  return {
+    alerts: state.alert.notifications
+  };
+};
+
+const mapDispatchToProps = {
+  welcome,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dis);

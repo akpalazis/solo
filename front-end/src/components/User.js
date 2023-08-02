@@ -3,19 +3,15 @@ import Trips from "./Trips";
 import AddTrip from "./AddTrip"
 import Dis from "./Dis"
 import io from "socket.io-client";
-import {login,logout} from "../helpers/actions";
+import {add, discussion, logout, setNotifications, trips, welcome} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      page: 'welcome',
-      userName: '',
-      notifications: [],
       n_notification:0,
       socket: null,
-      showDropdownMenu: false
     };
   }
 
@@ -24,7 +20,7 @@ class User extends React.Component {
   }
 
   setNotifications = (notifications) => {
-    this.setState({notifications:notifications})
+    this.props.setNotifications(notifications)
   }
 
   manipulateAlerts= (data) => {
@@ -49,7 +45,7 @@ class User extends React.Component {
   }
 
   componentDidMount() {
-    const socket = io("http://127.0.0.1:5000") //TODO add to state then unsub and disconnect
+    const socket = io("http://127.0.0.1:5000")
     this.setSocket(socket)
     const msg = "alert"
     socket.emit('subscribe_alert', msg); // Type annotation to resolve the error
@@ -69,24 +65,8 @@ class User extends React.Component {
     }
   }
 
-  tripPlaner = () => {
-      this.setState({ page: 'trips' })
-  }
-
-  toWelcomePage = () => {
-      this.setState({ page: 'welcome' });
-  }
-
-  addTrip = () => {
-      this.setState({ page: 'add' });
-  }
-
-  disc = () => {
-      this.setState({ page: 'discussion' });
-  }
-
   goToLogOut = () => {
-    this.props.logout()
+    this.props.page.logout()
   }
 
   onLogout = () => {
@@ -110,16 +90,16 @@ class User extends React.Component {
   };
 
   renderUser() {
-    if (this.state.page === 'welcome') {
+    if (this.props.userPage.page === 'welcome') {
       return (
         <div>
           <div className="user-welcome-container">
-        <h2 className="welcome-message">Welcome {this.state.userName}!</h2>
+        <h2 className="welcome-message">Welcome ...!</h2>
       </div>
       <div className="buttons-container">
-        <button onClick={this.tripPlaner}>Trip Planer</button>
-        <button onClick={this.addTrip}>Add Trip</button>
-        <button className="notification-icon" onClick={this.disc}>
+        <button onClick={this.props.trips}>Trip Planer</button>
+        <button onClick={this.props.add}>Add Trip</button>
+        <button className="notification-icon" onClick={this.props.discussion}>
           <div>
             {this.state.n_notification > 0 && <span className="badge">
               <i className="fa fa-bell"/>
@@ -132,31 +112,24 @@ class User extends React.Component {
     </div>
       )
     }
-    if (this.state.page === 'trips') {
+    if (this.props.userPage.page === 'trips') {
       return (
         <div className='ui segment'>
-          <Trips
-            toWelcomePage={this.toWelcomePage}
-          />
+          <Trips/>
         </div>
       )
     }
-    if (this.state.page === 'add') {
+    if (this.props.userPage.page === 'add') {
       return (
       <div className='ui segment'>
-          <AddTrip
-            toWelcomePage={this.toWelcomePage}
-          />
+          <AddTrip/>
         </div>
       )
     }
-    if (this.state.page === 'discussion'){
+    if (this.props.userPage.page === 'discussion'){
       return(
       <div className= 'ui segment'>
-        <Dis
-          toWelcomePage={this.toWelcomePage}
-          notifications={this.state.notifications}
-        />
+        <Dis/>
       </div>
       )
     }
@@ -171,13 +144,18 @@ class User extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    page: state.page,
+    page: state.login.page,
+    userPage: state.user,
   };
 };
 
 const mapDispatchToProps = {
-  login,
-  logout
+  logout,
+  welcome,
+  trips,
+  add,
+  discussion,
+  setNotifications
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

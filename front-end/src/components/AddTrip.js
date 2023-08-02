@@ -1,4 +1,6 @@
 import React from "react";
+import {welcome} from "../helpers/actions";
+import {connect} from "react-redux";
 
 class AddTrip extends React.Component {
    state = {
@@ -41,7 +43,7 @@ class AddTrip extends React.Component {
       .then((data) => {
         // Handle the response from the backend
         if (data.message === 'Trip added successful') {
-          this.props.toWelcomePage()
+          this.props.welcome()
         } else {
           this.onError(data.message)
         }
@@ -70,7 +72,7 @@ class AddTrip extends React.Component {
           </div>
           <div>
           <button type="submit" onClick={this.addTrip}>Add Trip</button>
-          <button onClick={this.props.toWelcomePage}>Go Back</button>
+          <button onClick={this.props.welcome}>Go Back</button>
           </div>
         </form>
       </div>
@@ -78,4 +80,8 @@ class AddTrip extends React.Component {
   }
 }
 
-export default AddTrip;
+const mapDispatchToProps = {
+  welcome,
+};
+
+export default connect(null, mapDispatchToProps)(AddTrip);
