@@ -8,6 +8,8 @@ function reducer(state = initialState, action) {
   switch (action.type) {
     case 'LOGIN':
       return { ...state, page: 'login' };
+    case 'LOGOUT':
+      return { ...state,page: 'logout'}
     case 'SIGNUP':
       return { ...state, page: 'signup' };
     case 'REGISTER_SUCCESS':

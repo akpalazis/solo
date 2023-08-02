@@ -2,7 +2,7 @@ from flask_bcrypt import Bcrypt
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, leave_room
-from models import db, User, Trip, Discussion, Comment, associate_trip_with_discussion, Notification
+from models import db, User, Trip, Discussion, associate_trip_with_discussion, Notification
 
 b_crypt = Bcrypt()
 
@@ -17,18 +17,21 @@ with app.app_context():
 
 
 class Socket(SocketIO):
-    def __init__(self, app):
-        super().__init__(app, cors_allowed_origins="*", manage_session=False)
+    def __init__(self, flask_app):
+        super().__init__(flask_app, cors_allowed_origins="*", manage_session=False)
         self.on_event('subscribe_alert', self.subscribe_alert)
         self.on_event('unsubscribe_alert', self.unsubscribe_alert)
 
     def subscribe_alert(self, room_name):
+        _ = self
         join_room(room_name)
 
     def unsubscribe_alert(self, room_name):
+        _ = self
         leave_room(room_name)
 
     def new_alert(self):
+        _ = self
         socket_io.emit('new_alert', "new alert", room='alert')
 
 
@@ -128,9 +131,8 @@ def get_user_trips():
                     }
                 )
             return jsonify(json_list=total)
-
-    else:
         return jsonify(message='User not found'), 404
+    return jsonify(message='User not found'), 404
 
 
 @app.route('/logout', methods=['POST'])
@@ -206,7 +208,8 @@ def get_user_dic():
 
 @app.route('/deletetrip/<int:trip_id>', methods=['DELETE'])
 def delete_trip(trip_id):
-    trip = Trip.query.get(trip_id)
+    trip = db.session.get(Trip, trip_id)
+
     discussion = Discussion.query.filter_by(user_id=trip.user_id, destination=trip.destination).first()
     if trip:
         db.session.delete(trip)
@@ -228,7 +231,7 @@ def delete_trip(trip_id):
 @app.route('/markasread/<int:notification_id>', methods=['PUT'])
 def update_notification(notification_id):
     # Find the notification in the database
-    notification = Notification.query.get(notification_id)
+    notification = db.session.get(Notification, notification_id)
     if not notification:
         return jsonify({'error': 'Notification not found'}), 404
 

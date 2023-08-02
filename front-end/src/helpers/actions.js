@@ -1,7 +1,7 @@
 // Action Types
 export const LOGIN = 'LOGIN';
-export const SIGNUP = 'SIGNUP';
 export const LOGOUT = 'LOGOUT';
+export const SIGNUP = 'SIGNUP';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const USER_PAGE = 'USER_PAGE';
 
@@ -20,4 +20,8 @@ export const registerSuccess = () => ({
 
 export const userPage = () => ({
   type: USER_PAGE,
+});
+
+export const logout = () => ({
+  type: LOGOUT,
 });

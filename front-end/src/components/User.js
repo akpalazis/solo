@@ -3,7 +3,7 @@ import Trips from "./Trips";
 import AddTrip from "./AddTrip"
 import Dis from "./Dis"
 import io from "socket.io-client";
-import {login} from "../helpers/actions";
+import {login,logout} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class User extends React.Component {
@@ -11,10 +11,11 @@ class User extends React.Component {
     super(props);
     this.state = {
       page: 'welcome',
+      userName: '',
       notifications: [],
       n_notification:0,
       socket: null,
-      showDropdownMenu: false // Add the new state property
+      showDropdownMenu: false
     };
   }
 
@@ -43,7 +44,6 @@ class User extends React.Component {
         console.error('Error:', error);
       });
   }
-
   setSocket = (socket) => {
     this.setState({socket:socket})
   }
@@ -63,10 +63,9 @@ class User extends React.Component {
   componentWillUnmount() {
     // Clean up socket connection
     if (this.state.socket) {
-      this.state.socket.on('unsubscribe_alert', () => {
-        console.log("done")
-      })
+      this.state.socket.on('unsubscribe_alert', () => {})
       this.state.socket.disconnect();
+      this.setState({socket:null})
     }
   }
 
@@ -86,6 +85,10 @@ class User extends React.Component {
       this.setState({ page: 'discussion' });
   }
 
+  goToLogOut = () => {
+    this.props.logout()
+  }
+
   onLogout = () => {
     fetch('/logout', {
       method: 'POST',
@@ -96,13 +99,14 @@ class User extends React.Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle any data from the response if needed
+        if (data.message === 'Logged Out Successfully'){
+              this.goToLogOut()
+        }
       })
       .catch((error) => {
         console.error('Logout error:', error);
         // Handle any errors that occurred during the logout request
       });
-    this.props.login()
   };
 
   renderUser() {
@@ -110,7 +114,7 @@ class User extends React.Component {
       return (
         <div>
           <div className="user-welcome-container">
-        <h2 className="welcome-message">Welcome User</h2>
+        <h2 className="welcome-message">Welcome {this.state.userName}!</h2>
       </div>
       <div className="buttons-container">
         <button onClick={this.tripPlaner}>Trip Planer</button>
@@ -151,7 +155,7 @@ class User extends React.Component {
       <div className= 'ui segment'>
         <Dis
           toWelcomePage={this.toWelcomePage}
-          notifications={this.state.notifications} // Corrected prop name
+          notifications={this.state.notifications}
         />
       </div>
       )
@@ -172,7 +176,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  login
+  login,
+  logout
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

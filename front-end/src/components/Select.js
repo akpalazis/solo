@@ -48,6 +48,14 @@ class Select extends React.Component {
           </div>
         )
     }
+    if (this.props.page === 'logout') {
+        return (
+          <div className='ui segment'>
+              <h1>Logged out Successfully!!!</h1>
+              <Login/>
+          </div>
+        )
+    }
     if (this.props.page === 'userPage'){
       return (
         <div className='ui segment'>
