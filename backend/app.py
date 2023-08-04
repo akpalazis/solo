@@ -1,8 +1,8 @@
 from flask_bcrypt import Bcrypt
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from flask_socketio import SocketIO, join_room, leave_room
-from models import db, User, Trip, Discussion, associate_trip_with_discussion, Notification
+from backend.models import db, User, Trip, Discussion, associate_trip_with_discussion, Notification
+from backend.websocket import Socket
 
 b_crypt = Bcrypt()
 
@@ -14,26 +14,6 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-
-
-class Socket(SocketIO):
-    def __init__(self, flask_app):
-        super().__init__(flask_app, cors_allowed_origins="*", manage_session=False)
-        self.on_event('subscribe_alert', self.subscribe_alert)
-        self.on_event('unsubscribe_alert', self.unsubscribe_alert)
-
-    def subscribe_alert(self, room_name):
-        _ = self
-        join_room(room_name)
-
-    def unsubscribe_alert(self, room_name):
-        _ = self
-        leave_room(room_name)
-
-    def new_alert(self):
-        _ = self
-        socket_io.emit('new_alert', "new alert", room='alert')
-
 
 socket_io = Socket(app)
 
@@ -180,13 +160,13 @@ def add_trip():
                     )
                     db.session.add(new_notification)
                     db.session.commit()
-            socket_io.new_alert()
-        return jsonify({'message': 'Trip added successful'}), 200
+        socket_io.new_alert()
+        return jsonify({'': ""}), 201
+    else:
+        return jsonify({'message': 'User not Found'}), 401
 
-    return jsonify({'message': 'User not Found'}), 401
 
-
-@app.route('/usertrips', methods=['GET'])
+@app.route('/userdiscussion', methods=['GET'])
 def get_user_dic():
     user = User.query.filter_by(username=session['user']).first()
     if user:
@@ -243,7 +223,7 @@ def update_notification(notification_id):
 
     # Optionally, you can return a response to the frontend to indicate the update was successful
     socket_io.new_alert()
-    return jsonify({'message': 'Notification updated successfully'})
+    return jsonify({'': ""}), 201
 
 
 if __name__ == '__main__':

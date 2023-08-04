@@ -58,7 +58,7 @@ class Login extends React.Component {
         <h3>{this.state.errorMessage}</h3>
         <form>
           <div>
-            <label className>Username:</label>
+            <label>Username:</label>
           </div>
           <div>
             <input
@@ -69,7 +69,7 @@ class Login extends React.Component {
             />
           </div>
           <div>
-            <label className>Password:</label>
+            <label>Password:</label>
           </div>
           <div>
             <input

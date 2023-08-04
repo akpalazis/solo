@@ -1,5 +1,4 @@
 import { createStore, combineReducers } from 'redux';
-import React from "react";
 
 const loginInitialState = {
   page: 'login',
@@ -54,17 +53,27 @@ const userReducer = (state = userInitialState, action) => {
   }
 };
 
-const alertInitialState = {
+const tripsInitialState = {
     notifications: [],
 };
 
-const alertReducer = (state = alertInitialState, action) => {
+const tripsReducer = (state = tripsInitialState, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATIONS':
       return {
         ...state,
         notifications: action.notifications,
       };
+    case 'SET_TRIPS':
+    return {
+      ...state,
+      trips: action.trips,
+    };
+    case 'SET_DISCUSSIONS':
+    return {
+      ...state,
+      discussions: action.discussions,
+    };
     default:
       return state;
   }
@@ -73,7 +82,7 @@ const alertReducer = (state = alertInitialState, action) => {
 const rootReducer = combineReducers({
   login: loginReducer,
   user: userReducer,
-  alert: alertReducer
+  trips: tripsReducer
 });
 
 const store = createStore(rootReducer);

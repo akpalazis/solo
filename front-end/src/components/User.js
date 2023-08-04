@@ -1,9 +1,9 @@
 import React from "react";
 import Trips from "./Trips";
 import AddTrip from "./AddTrip"
-import Dis from "./Dis"
+import Dis from "./Discussion"
 import io from "socket.io-client";
-import {add, discussion, logout, setNotifications, trips, welcome} from "../helpers/actions";
+import {add, discussion, logout, setDiscussions, setNotifications, setTrips, trips, welcome} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class User extends React.Component {
@@ -19,27 +19,42 @@ class User extends React.Component {
     this.setState({n_notification: n})
   }
 
-  setNotifications = (notifications) => {
-    this.props.setNotifications(notifications)
-  }
-
   manipulateAlerts= (data) => {
     const unreadNotifications = data.filter((notification) => !notification.is_read);
     const n = unreadNotifications.length;
     this.changeNotificationNumber(n)
-    this.setNotifications(data)
   }
 
   checkForAlerts = () => {
     fetch('/notifications') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
-        this.manipulateAlerts(data.json_list);
+        const json_list = data.json_list
+        this.manipulateAlerts(json_list)
+        this.props.setNotifications(json_list)
       })
       .catch((error) => {
         console.error('Error:', error);
       });
+    fetch('/trips') // Replace with your API endpoint
+      .then((response) => response.json())
+      .then((data) => {
+        this.props.setTrips(data.json_list)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    fetch('/userdiscussion') // Replace with your API endpoint
+      .then((response) => response.json())
+      .then((data) => {
+        this.props.setDiscussions(data.json_list);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        this.setState({ errorMessage: 'Error fetching data.' });
+      });
   }
+
   setSocket = (socket) => {
     this.setState({socket:socket})
   }
@@ -48,7 +63,7 @@ class User extends React.Component {
     const socket = io("http://127.0.0.1:5000")
     this.setSocket(socket)
     const msg = "alert"
-    socket.emit('subscribe_alert', msg); // Type annotation to resolve the error
+    socket.emit('subscribe_alert', msg);
 
     socket.on('new_alert', (data) => {
       this.checkForAlerts()
@@ -66,7 +81,7 @@ class User extends React.Component {
   }
 
   goToLogOut = () => {
-    this.props.page.logout()
+    this.props.logout()
   }
 
   onLogout = () => {
@@ -155,7 +170,9 @@ const mapDispatchToProps = {
   trips,
   add,
   discussion,
-  setNotifications
+  setNotifications,
+  setTrips,
+  setDiscussions
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

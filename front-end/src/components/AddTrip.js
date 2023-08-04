@@ -39,13 +39,15 @@ class AddTrip extends React.Component {
           destination : destination,
         })
     })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response from the backend
-        if (data.message === 'Trip added successful') {
-          this.props.welcome()
-        } else {
-          this.onError(data.message)
+      .then((response) => {
+        if (response.status === 201){
+          response.json().then((data) => {
+            this.props.welcome()
+          })
+        } else{
+          response.json().then((data) => {
+            this.onError(data.message)
+          })
         }
       })
       .catch((error) => {

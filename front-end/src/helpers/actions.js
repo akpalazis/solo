@@ -50,8 +50,20 @@ export const discussion = () => ({
 });
 
 export const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
+export const SET_TRIPS = "SET_TRIPS";
+export const SET_DISCUSSIONS = "SET_DISCUSSIONS";
 
 export const setNotifications = (notifications) => ({
   type: SET_NOTIFICATIONS,
-  notifications,
+  notifications: notifications,
+});
+
+export const setTrips = (trips) => ({
+  type: SET_TRIPS,
+  trips: trips,
+});
+
+export const setDiscussions = (discussions) => ({
+  type: SET_DISCUSSIONS,
+  discussions: discussions,
 });

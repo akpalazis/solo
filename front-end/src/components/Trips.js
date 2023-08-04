@@ -4,30 +4,12 @@ import {connect} from "react-redux";
 
 class Trips extends React.Component {
   state = {
-    data: [],
     errorMessage: ""
   };
 
-  addData = (data) => {
-    this.setState({data : data})
-  }
 
-  checkSession = () => {
-    fetch('/trips') // Replace with your API endpoint
-      .then((response) => response.json())
-      .then((data) => {
-        this.addData(data.json_list)
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  };
 
-  componentDidMount() {
-    this.checkSession()
-  }
-
-    onError = (msg) => {
+  onError = (msg) => {
     const state =  Object.assign({}, this.state);
     state.errorMessage = msg;
     this.setState(state);
@@ -44,7 +26,6 @@ class Trips extends React.Component {
       .then((data) => {
         // Handle the response from the backend
         if (data.message === 'Trip deleted successfully') {
-          this.checkSession()
           this.onError(data.message) // TODO: change the error message to message, the delete is not an error message
         } else {
           this.onError(data.message)
@@ -64,7 +45,7 @@ class Trips extends React.Component {
       <form>
           <div>
             {
-              this.state.data.map((trip) => (
+              this.props.trips.map((trip) => (
               <div key={trip.id} className="card">
                 <div className="destination">
                   <p>
@@ -82,8 +63,14 @@ class Trips extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    trips: state.trips.trips
+  };
+};
+
 const mapDispatchToProps = {
   welcome,
 };
 
-export default connect(null, mapDispatchToProps)(Trips);
+export default connect(mapStateToProps, mapDispatchToProps)(Trips);
