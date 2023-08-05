@@ -26,7 +26,7 @@ class User extends React.Component {
   }
 
   checkForAlerts = () => {
-    fetch('/notifications') // Replace with your API endpoint
+    fetch('/notifications')
       .then((response) => response.json())
       .then((data) => {
         const json_list = data.json_list
@@ -71,8 +71,7 @@ class User extends React.Component {
     this.checkForAlerts()
   }
 
-  componentWillUnmount() {
-    // Clean up socket connection
+  unsubscribe() {
     if (this.state.socket) {
       this.state.socket.on('unsubscribe_alert', () => {})
       this.state.socket.disconnect();
@@ -81,6 +80,7 @@ class User extends React.Component {
   }
 
   goToLogOut = () => {
+    this.unsubscribe()
     this.props.logout()
   }
 

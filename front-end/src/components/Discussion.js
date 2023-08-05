@@ -20,22 +20,19 @@ class Discussion extends React.Component {
       console.log(error.message);
     });
   };
-
-
-
   render() {
     return (
       <div>
         <h2>Welcome To Discussions</h2>
         <h4>{this.state.errorMessage}</h4>
-        <ul>
+         <ul>
           {this.props.trips.discussions.map((discussion, index) => {
-            const isUnread = !this.props.alerts[index].is_read;
+            const isUnread = !this.props.trips.notifications[index].is_read;
             return (
               <li
                 key={discussion.id}
                 className={isUnread ? 'unread' : ''}
-                onClick={() => this.markDiscussionAsRead(this.props.alerts[index].id)}
+                onClick={() => this.markDiscussionAsRead(this.props.trips.notifications[index].id)}
               >
                 <span style={{ fontWeight: isUnread ? 'bold' : 'normal' }}>
                   {discussion.destination}
@@ -52,7 +49,6 @@ class Discussion extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    alerts: state.trips.notifications,
     trips: state.trips
   };
 };

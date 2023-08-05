@@ -7,8 +7,6 @@ class Trips extends React.Component {
     errorMessage: ""
   };
 
-
-
   onError = (msg) => {
     const state =  Object.assign({}, this.state);
     state.errorMessage = msg;
