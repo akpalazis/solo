@@ -17,3 +17,4 @@ class Socket(SocketIO):
 
     def new_alert(self):
         self.emit('new_alert', "new alert", room='alert')
+
