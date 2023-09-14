@@ -5,6 +5,7 @@ from flask_cors import CORS
 from backend.helpers.db_helper import is_user_trip_exists
 from backend.models import db, User, Trip, Discussion, associate_trip_with_discussion, Notification
 from backend.websocket import Socket
+from auth.views import auth_blueprint
 
 b_crypt = Bcrypt()
 
@@ -16,6 +17,7 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
+    app.register_blueprint(auth_blueprint)
 
 socket_io = Socket(app)
 
@@ -40,65 +42,6 @@ def create_discussion(user_id, destination):
     return new_discussion
 
 
-@app.route('/notifications', methods=['GET'])
-def notification():
-    user = User.query.filter_by(username=session['user']).first()
-    alerts = user.notifications
-    total = []
-    for alert in alerts:
-        total.append({
-            "id": alert.id,
-            "user_id": alert.user_id,
-            "destination": alert.destination,
-            "message": alert.message,
-            "is_read": alert.is_read
-        })
-    return jsonify(json_list=total)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == "GET":
-        if 'user' in session:
-            return jsonify({'message': 'Access granted', 'userId': session['user']}), 200
-        else:
-            return jsonify({'message': 'Access denied'}), 401
-    if request.method == "POST":
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        user = User.query.filter_by(username=username).first()
-        if user and b_crypt.check_password_hash(user.password, password):
-            session['user'] = username
-            session['user_id'] = user.id
-            return jsonify({'message': 'Login successful', 'userId': session['user']}), 200
-        else:
-            # User does not exist or incorrect credentials, login failed
-            return jsonify({'message': 'Login failed'}), 401
-
-
-@app.route('/singup', methods=['POST'])
-def sing_up():
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
-
-    existing_user = User.query.filter_by(username=username).first()
-
-    if existing_user:
-        return jsonify({'message': 'User already exists'}), 409
-
-    else:
-        hashed_password = b_crypt.generate_password_hash(password).decode('utf-8')
-
-        user = User(username=username,
-                    password=hashed_password)
-
-        db.session.add(user)
-        db.session.commit()
-        return jsonify({'message': 'Account Created Successfully'}), 200
-
-
 @app.route('/trips', methods=['GET'])
 def get_user_trips():
     if 'user' in session:
@@ -116,13 +59,6 @@ def get_user_trips():
                 )
             return jsonify(json_list=total)
     return jsonify(message='User not found'), 404
-
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    if 'user' in session:
-        session.clear()
-    return jsonify({'message': 'Logged Out Successfully'}), 200
 
 
 @app.route('/addtrip', methods=['POST'])
@@ -205,23 +141,5 @@ def delete_trip(trip_id):
         return jsonify({'message': 'Trip not found'}), 404
 
 
-@app.route('/markasread/<int:notification_id>', methods=['PUT'])
-def update_notification(notification_id):
-    # Find the notification in the database
-    notification = db.session.get(Notification, notification_id)
-    if not notification:
-        return jsonify({'error': 'Notification not found'}), 404
-
-    # Update the notification record
-    notification.is_read = True
-
-    # Save the changes to the database
-    db.session.commit()
-
-    # Optionally, you can return a response to the frontend to indicate the update was successful
-    socket_io.new_alert()
-    return jsonify({'': ""}), 201
-
-
 if __name__ == '__main__':
-    socket_io.run(app, debug=False)
+    socket_io.run(app, debug=True)

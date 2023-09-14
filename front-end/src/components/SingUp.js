@@ -38,7 +38,7 @@ class SingUp extends React.Component{
   sendSingUpRequest = (event) => {
     event.preventDefault();
     this.clearErrors()
-    fetch('/singup', {
+    fetch('/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
