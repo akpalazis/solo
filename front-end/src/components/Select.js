@@ -11,7 +11,7 @@ class Select extends React.Component {
   }
 
   checkSeason = () => {
-    fetch('/login') // Replace with your API endpoint
+    fetch('/home') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
         if (data.message === 'Access granted') {

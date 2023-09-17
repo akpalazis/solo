@@ -1,5 +1,5 @@
-from flask import Blueprint, session, jsonify, request
-
+from flask import Blueprint, jsonify, request
+from flask_login import current_user
 from backend.helpers.db_helper import is_user_trip_exists
 from backend.main import socket_io
 from backend.models import db, Notification, Discussion, associate_trip_with_discussion, User, Trip
@@ -31,9 +31,7 @@ def create_discussion(user_id, destination):
 def add_trip():
     data = request.json
     destination = data.get("destination")
-
-    user = User.query.filter_by(username=session['user']).first()  # Retrieve the user by username
-
+    user = current_user
     if not user:
         return jsonify({'message': 'User not Found'}), 401
 
@@ -108,18 +106,17 @@ def delete_trip(trip_id):
 
 @trips_blueprint.route('/trips', methods=['GET'])
 def get_user_trips():
-    if 'user' in session:
-        user = User.query.filter_by(username=session['user']).first()
-        if user:
-            trips = user.trips
-            total = []
-            for t in trips:
-                total.append(
-                    {
-                        "id": t.id,
-                        "user": t.user_id,
-                        "destination": t.destination,
-                    }
-                )
-            return jsonify(json_list=total)
+    user = current_user
+    if user:
+        trips = user.trips
+        total = []
+        for t in trips:
+            total.append(
+                {
+                    "id": t.id,
+                    "user": t.user_id,
+                    "destination": t.destination,
+                }
+            )
+        return jsonify(json_list=total)
     return jsonify(message='User not found'), 404

@@ -1,5 +1,5 @@
-from flask import Blueprint, session, jsonify
-
+from flask import Blueprint, jsonify
+from flask_login import current_user
 from backend.models import User, db, Notification
 from backend.main import socket_io
 alert_blueprint = Blueprint('alert_blueprint', __name__)
@@ -7,7 +7,7 @@ alert_blueprint = Blueprint('alert_blueprint', __name__)
 
 @alert_blueprint.route('/notifications', methods=['GET'])
 def notification():
-    user = User.query.filter_by(username=session['user']).first()
+    user = current_user
     alerts = user.notifications
     total = []
     for alert in alerts:

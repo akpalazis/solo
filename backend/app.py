@@ -1,8 +1,9 @@
-from flask import jsonify, session
+from flask import jsonify
 from flask_cors import CORS
+from flask_login import current_user
 
 from backend.models import db, User, Discussion
-from backend.main import app, socket_io
+from backend.main import app, socket_io,login_manager
 from backend.auth.views import auth_blueprint
 from backend.alerts.views import alert_blueprint
 from backend.trips.views import trips_blueprint
@@ -11,6 +12,12 @@ app.config.from_pyfile('config.py')
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 # Initialize the database
 db.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 with app.app_context():
     db.create_all()
@@ -21,7 +28,7 @@ with app.app_context():
 
 @app.route('/userdiscussion', methods=['GET'])
 def get_user_dic():
-    user = User.query.filter_by(username=session['user']).first()
+    user = current_user
     if user:
         discussions = user.discussions  # Retrieve the trips associated with the user
         discussion_data = []
