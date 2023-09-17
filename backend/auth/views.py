@@ -29,7 +29,7 @@ def login():
             return jsonify({'message': 'Login failed'}), 401
 
 
-@auth_blueprint.route('/singup', methods=['POST'])
+@auth_blueprint.route('/signup', methods=['POST'])
 def sing_up():
     data = request.json
     username = data.get('username')
