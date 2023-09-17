@@ -63,7 +63,7 @@ def add_trip():
                 db.session.add(new_notification)
                 db.session.commit()
         socket_io.new_alert()
-    return jsonify({'': ""}), 201
+    return get_user_trips(), 201
 
 
 @trips_blueprint.route('/markasread/<int:notification_id>', methods=['PUT'])

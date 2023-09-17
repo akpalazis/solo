@@ -1,5 +1,5 @@
 import React from "react";
-import {welcome} from "../helpers/actions";
+import {welcome,setTrips} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class AddTrip extends React.Component {
@@ -42,6 +42,8 @@ class AddTrip extends React.Component {
       .then((response) => {
         if (response.status === 201){
           response.json().then((data) => {
+            console.log(data)
+            this.props.setTrips(data.json_list)
             this.props.welcome()
           })
         } else{
@@ -61,7 +63,7 @@ class AddTrip extends React.Component {
         <h2>Welcome To Trip Planner</h2>
         <h3>Add New Trip</h3>
         <h4>{this.state.errorMessage}</h4>
-        <form onSubmit={this.handleSubmit}>
+        <form>
           <div>
             <label htmlFor="destination">Destination:</label>
             <input
@@ -84,6 +86,7 @@ class AddTrip extends React.Component {
 
 const mapDispatchToProps = {
   welcome,
+  setTrips
 };
 
 export default connect(null, mapDispatchToProps)(AddTrip);
