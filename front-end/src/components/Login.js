@@ -1,5 +1,5 @@
 import React from "react";
-import {signup, userPage} from "../helpers/actions"
+import {home, userPage} from "../helpers/actions"
 import {connect} from "react-redux";
 
 class Login extends React.Component {
@@ -81,7 +81,7 @@ class Login extends React.Component {
           </div>
           <div>
             <button onClick={this.sendLoginRequest}>Login</button>
-            <button onClick={this.props.signup}>SignUp</button>
+            <button onClick={this.props.home}>Cancel</button>
           </div>
         </form>
       </div>
@@ -96,7 +96,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  signup,
+  home,
   userPage,
 };
 

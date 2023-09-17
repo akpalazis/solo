@@ -1,5 +1,5 @@
 import React from "react";
-import {login, registerSuccess} from "../helpers/actions";
+import {login, registerSuccess,home} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class SingUp extends React.Component{
@@ -92,7 +92,7 @@ class SingUp extends React.Component{
           </div>
           <div>
               <button onClick = {this.sendSingUpRequest}>SignUp</button>
-            <button onClick={this.props.login}>Cancel</button>
+            <button onClick={this.props.home}>Cancel</button>
           </div>
         </form>
         </div>
@@ -112,7 +112,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   registerSuccess,
-  login
+  login,
+  home
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingUp);

@@ -4,6 +4,7 @@ export const LOGOUT = 'LOGOUT';
 export const SIGNUP = 'SIGNUP';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const USER_PAGE = 'USER_PAGE';
+export const HOME = 'HOME';
 
 // Action Creators
 export const login = () => ({
@@ -26,13 +27,16 @@ export const logout = () => ({
   type: LOGOUT,
 });
 
+export const home = () => ({
+  type: HOME,
+});
+
 
 export const WELCOME = 'WELCOME';
 export const TRIPS = 'TRIPS';
 export const ADD = 'ADD';
 export const DISCUSSION = 'DISCUSSION';
 
-// Action Creators
 export const welcome = () => ({
   type: WELCOME,
 });

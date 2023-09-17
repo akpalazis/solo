@@ -1,11 +1,13 @@
 import { createStore, combineReducers } from 'redux';
 
 const loginInitialState = {
-  page: 'login',
+  page: 'HOME',
 };
 
 function loginReducer(state = loginInitialState, action) {
   switch (action.type) {
+    case 'HOME':
+      return {...state, page:'home'}
     case 'LOGIN':
       return { ...state, page: 'login' };
     case 'LOGOUT':
