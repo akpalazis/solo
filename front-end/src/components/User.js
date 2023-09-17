@@ -36,14 +36,6 @@ class User extends React.Component {
       .catch((error) => {
         console.error('Error:', error);
       });
-    fetch('/trips') // Replace with your API endpoint
-      .then((response) => response.json())
-      .then((data) => {
-        this.props.setTrips(data.json_list)
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
     fetch('/userdiscussion') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
@@ -69,6 +61,15 @@ class User extends React.Component {
       this.checkForAlerts()
     });
     this.checkForAlerts()
+
+    fetch('/trips') // Replace with your API endpoint
+      .then((response) => response.json())
+      .then((data) => {
+        this.props.setTrips(data.json_list)
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   unsubscribe() {

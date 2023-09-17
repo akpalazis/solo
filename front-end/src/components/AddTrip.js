@@ -42,7 +42,6 @@ class AddTrip extends React.Component {
       .then((response) => {
         if (response.status === 201){
           response.json().then((data) => {
-            console.log(data)
             this.props.setTrips(data.json_list)
             this.props.welcome()
           })

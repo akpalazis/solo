@@ -1,5 +1,5 @@
 import React from "react";
-import {welcome} from "../helpers/actions";
+import {welcome,setTrips} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class Trips extends React.Component {
@@ -22,12 +22,7 @@ class Trips extends React.Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response from the backend
-        if (data.message === 'Trip deleted successfully') {
-          this.onError(data.message) // TODO: change the error message to message, the delete is not an error message
-        } else {
-          this.onError(data.message)
-        }
+          this.props.setTrips(data.json_list)
       })
       .catch((error) => {
         this.onError(error.message);
@@ -69,6 +64,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   welcome,
+  setTrips
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Trips);

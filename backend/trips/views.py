@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 from backend.helpers.db_helper import is_user_trip_exists
 from backend.main import socket_io
 from backend.models import db, Notification, Discussion, associate_trip_with_discussion, User, Trip
@@ -28,19 +28,17 @@ def create_discussion(user_id, destination):
 
 
 @trips_blueprint.route('/addtrip', methods=['POST'])
+@login_required
 def add_trip():
     data = request.json
     destination = data.get("destination")
-    user = current_user
-    if not user:
-        return jsonify({'message': 'User not Found'}), 401
 
-    if is_user_trip_exists(user, destination):
+    if is_user_trip_exists(current_user, destination):
         return jsonify({'message': 'Trip already exists'}), 409
 
-    new_trip = create_trip(user.id, destination)
+    new_trip = create_trip(current_user.id, destination)
 
-    new_discussion = create_discussion(user.id,destination)
+    new_discussion = create_discussion(current_user.id, destination)
 
     associate_trip_with_discussion(new_trip, new_discussion)
     db.session.commit()
@@ -65,6 +63,7 @@ def add_trip():
 
 
 @trips_blueprint.route('/markasread/<int:notification_id>', methods=['PUT'])
+@login_required
 def update_notification(notification_id):
     # Find the notification in the database
     notification = db.session.get(Notification, notification_id)
@@ -83,6 +82,7 @@ def update_notification(notification_id):
 
 
 @trips_blueprint.route('/deletetrip/<int:trip_id>', methods=['DELETE'])
+@login_required
 def delete_trip(trip_id):
     trip = db.session.get(Trip, trip_id)
 
@@ -99,24 +99,21 @@ def delete_trip(trip_id):
             db.session.delete(alert)
         db.session.commit()
         socket_io.new_alert()
-        return jsonify({'message': 'Trip deleted successfully'}), 200
-    else:
-        return jsonify({'message': 'Trip not found'}), 404
+        return get_user_trips(), 200
 
 
 @trips_blueprint.route('/trips', methods=['GET'])
+@login_required
 def get_user_trips():
     user = current_user
-    if user:
-        trips = user.trips
-        total = []
-        for t in trips:
-            total.append(
-                {
-                    "id": t.id,
-                    "user": t.user_id,
-                    "destination": t.destination,
-                }
-            )
-        return jsonify(json_list=total)
-    return jsonify(message='User not found'), 404
+    trips = user.trips
+    total = []
+    for t in trips:
+        total.append(
+            {
+                "id": t.id,
+                "user": t.user_id,
+                "destination": t.destination,
+            }
+        )
+    return jsonify(json_list=total)

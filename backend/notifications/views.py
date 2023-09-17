@@ -1,17 +1,17 @@
-from flask import Blueprint, jsonify, session
+from flask import Blueprint, jsonify
 
 from backend.app import socket_io
 from backend.models import db, Notification, User
+from flask_login import current_user,login_required
 
 notifications_blueprint = Blueprint('auth', __name__)
 
 
 @notifications_blueprint.route('/notifications', methods=['GET'])
+@login_required
 def notification():
-    user = User.query.filter_by(username=session['user']).first()
-    alerts = user.notifications
     total = []
-    for alert in alerts:
+    for alert in current_user.notifications:
         total.append({
             "id": alert.id,
             "user_id": alert.user_id,
@@ -23,8 +23,8 @@ def notification():
 
 
 @notifications_blueprint.route('/markasread/<int:notification_id>', methods=['PUT'])
+@login_required
 def update_notification(notification_id):
-    # Find the notification in the database
     notification = db.session.get(Notification, notification_id)
     if not notification:
         return jsonify({'error': 'Notification not found'}), 404

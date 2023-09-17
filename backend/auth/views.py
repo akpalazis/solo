@@ -1,13 +1,12 @@
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
-from flask_login import current_user, login_user,logout_user
+from flask_login import current_user, login_user, logout_user,login_required
 from backend.main import login_manager
 from backend.models import User, db
 
 b_crypt = Bcrypt()
 
 auth_blueprint = Blueprint('auth_blueprint', __name__)
-
 
 
 @auth_blueprint.route('/home', methods=['GET'])
@@ -32,7 +31,6 @@ def login():
             login_user(user, remember=True)
             return jsonify({'message': 'Login successful'}), 200
         else:
-            # User does not exist or incorrect credentials, login failed
             return jsonify({'message': 'Login failed'}), 401
 
 
@@ -59,6 +57,7 @@ def sing_up():
 
 
 @auth_blueprint.route('/logout', methods=['POST'])
+@login_required
 def logout():
     logout_user()
     return jsonify({'message': 'Logged Out Successfully'}), 200
