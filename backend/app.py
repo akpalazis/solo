@@ -27,4 +27,4 @@ with app.app_context():
 
 
 if __name__ == '__main__':
-    socket_io.run(app, debug=True)
+    socket_io.run(app, host="0.0.0.0", debug=True)

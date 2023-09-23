@@ -24,18 +24,24 @@ class User(db.Model, UserMixin):
         return str(self.id)
 
 
+trip_discussion_association = db.Table(
+    'trip_discussion_association',
+    db.Column('trip_id', db.Integer, db.ForeignKey('trip.id')),
+    db.Column('discussion_id', db.Integer, db.ForeignKey('discussion.id'))
+)
+
+
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
-    discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.id'), nullable=True)
+    associated_discussions = db.relationship('Discussion', secondary=trip_discussion_association, backref='trips', lazy=True)
 
 
 class Discussion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     destination = db.Column(db.String(100))
-    trips = db.relationship('Trip', backref='discussion', lazy=True)
 
 
 class Comment(db.Model):
@@ -51,6 +57,9 @@ class Notification(db.Model):
     destination = db.Column(db.String, db.ForeignKey('discussion.destination'), nullable=False)
     message = db.Column(db.String(255), nullable=False)
     is_read = db.Column(db.Boolean, default=False)
+
+
+
 
 
 def associate_trip_with_discussion(trip, discussion):

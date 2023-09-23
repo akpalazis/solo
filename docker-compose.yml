@@ -1,0 +1,35 @@
+version: '3'
+services:
+  flask-app:
+    build:
+      context: ./backend  # Replace with the path to your Flask app directory
+    ports:
+      - "5000:5000"
+    networks:
+      - my-network
+    depends_on:
+      - db
+
+  react-app:
+    build:
+      context: ./frontend  # Replace with the path to your React app directory
+    ports:
+      - "3000:3000"
+    networks:
+      - my-network
+    depends_on:
+      - flask-app
+
+  db:
+    image: postgres:13  # Use the PostgreSQL Docker image
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+
+networks:
+  my-network:
