@@ -44,22 +44,19 @@ class Discussion(db.Model):
     destination = db.Column(db.String(100))
 
 
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    destination = db.Column(db.String, nullable=False)
+    message = db.Column(db.String(255), nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     discussion_id = db.Column(db.Integer, db.ForeignKey('discussion.id'), nullable=False)
     message = db.Column(db.Text)
-
-
-class Notification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    destination = db.Column(db.String, db.ForeignKey('discussion.destination'), nullable=False)
-    message = db.Column(db.String(255), nullable=False)
-    is_read = db.Column(db.Boolean, default=False)
-
-
-
 
 
 def associate_trip_with_discussion(trip, discussion):

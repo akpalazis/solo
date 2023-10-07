@@ -27,9 +27,10 @@ services:
     networks:
       - my-network
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-
+      POSTGRES_DB: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+    volumes:
+        - ./backup_db/backup.sql:/docker-entrypoint-initdb.d/db.sql
 networks:
   my-network:

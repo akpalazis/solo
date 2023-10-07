@@ -59,6 +59,8 @@ const tripsInitialState = {
     notifications: [],
 };
 
+
+
 const tripsReducer = (state = tripsInitialState, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATIONS':
@@ -81,10 +83,27 @@ const tripsReducer = (state = tripsInitialState, action) => {
   }
 };
 
+const initialUsernameState = {
+  username: '', // Initialize username to an empty string
+};
+
+const userNameReducer = (state = initialUsernameState, action) => {
+  switch (action.type) {
+    case 'UPDATE_USERNAME':
+      return {
+        ...state,
+        username: action.username,
+      };
+    default:
+      return state;
+  }
+};
+
 const rootReducer = combineReducers({
   login: loginReducer,
   user: userReducer,
-  trips: tripsReducer
+  trips: tripsReducer,
+  userName: userNameReducer
 });
 
 const store = createStore(rootReducer);

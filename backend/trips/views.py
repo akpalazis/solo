@@ -58,6 +58,7 @@ def add_trip():
                 )
                 db.session.add(new_notification)
                 db.session.commit()
+
         socket_io.new_alert()
     return get_user_trips(), 201
 

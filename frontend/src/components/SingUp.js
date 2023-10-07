@@ -6,6 +6,7 @@ class SingUp extends React.Component{
   state = {
     username: "",
     password:"",
+    profilePicture:"",
     userNameError: "",
   }
 
@@ -17,7 +18,12 @@ class SingUp extends React.Component{
 
   onInputSingUpChange = evt => {
     const state =  Object.assign({}, this.state);
-    state[evt.target.name] = evt.target.value;
+    if(evt.target.type ==='file'){
+      state[evt.target.name] = evt.target.files[0];
+
+    } else{
+      state[evt.target.name] = evt.target.value;
+    }
     state.updated_at =
     this.setState(state);
   };
@@ -35,17 +41,19 @@ class SingUp extends React.Component{
     this.setState(state)
   }
 
+
+
   sendSingUpRequest = (event) => {
     event.preventDefault();
     this.clearErrors()
+    const formData = new FormData()
+    formData.append('username',this.state.username)
+    formData.append('password',this.state.password)
+    formData.append('picture',this.state.profilePicture)
+
     fetch('/signup', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({username:this.state.username,
-                                  password:this.state.password,
-                                })
+      body: formData
     })
       .then((response) => response.json())
       .then((data) => {
@@ -87,6 +95,17 @@ class SingUp extends React.Component{
               placeholder="Password"
               name="password"
               value={this.state.password}
+              onChange={this.onInputSingUpChange}
+            />
+          </div>
+          <div>
+            <label>Profile Picture:</label>
+          </div>
+          <div>
+            <input
+              name="profilePicture"
+              type="file"
+              accept="image/*"
               onChange={this.onInputSingUpChange}
             />
           </div>

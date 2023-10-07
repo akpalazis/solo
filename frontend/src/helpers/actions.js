@@ -71,3 +71,10 @@ export const setDiscussions = (discussions) => ({
   type: SET_DISCUSSIONS,
   discussions: discussions,
 });
+
+export const updateUsername = (username) => {
+  return {
+    type: 'UPDATE_USERNAME',
+    username,
+  };
+};

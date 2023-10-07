@@ -1,5 +1,5 @@
 import React from "react";
-import {home, userPage} from "../helpers/actions"
+import {home, userPage,updateUsername} from "../helpers/actions"
 import {connect} from "react-redux";
 
 class Login extends React.Component {
@@ -41,6 +41,7 @@ class Login extends React.Component {
       .then((data) => {
         // Handle the response from the backend
         if (data.message === 'Login successful') {
+          this.props.updateUsername(username);
           this.props.userPage()
         } else {
           this.onError("Username or Password is invalid... Try again!")
@@ -98,6 +99,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   home,
   userPage,
+  updateUsername
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

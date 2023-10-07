@@ -12,11 +12,16 @@ class User extends React.Component {
     this.state = {
       n_notification:0,
       socket: null,
+      image: "",
     };
   }
 
   changeNotificationNumber = (n) => {
     this.setState({n_notification: n})
+  }
+
+  changeImage = (img) => {
+    this.setState({image: img.url})
   }
 
   manipulateAlerts= (data) => {
@@ -70,6 +75,16 @@ class User extends React.Component {
       .catch((error) => {
         console.error('Error:', error);
       });
+
+
+    fetch(`/get-profile-picture/${this.props.username}`) // Use the username variable in the URL
+    .then((response) => response.json())
+    .then((data) => {
+    this.changeImage(data);
+    })
+    .catch((error) => {
+    console.error('Error:', error);
+    });
   }
 
   unsubscribe() {
@@ -110,7 +125,12 @@ class User extends React.Component {
       return (
         <div>
           <div className="user-welcome-container">
-        <h2 className="welcome-message">Welcome ...!</h2>
+        <h2 className="welcome-message">Welcome {this.props.username} !!!</h2>
+      <img
+            src={this.state.image} // Replace with the actual image source
+            alt="User Profile"
+            className="profile-image"
+          />
       </div>
       <div className="buttons-container">
         <button onClick={this.props.trips}>Trip Planer</button>
@@ -162,6 +182,7 @@ const mapStateToProps = (state) => {
   return {
     page: state.login.page,
     userPage: state.user,
+    username: state.userName.username
   };
 };
 
