@@ -50,6 +50,11 @@ const userReducer = (state = userInitialState, action) => {
         ...state,
       page:'discussion'
       }
+    case 'SETTINGS':
+      return {
+        ...state,
+      page:'settings'
+      }
     default:
       return state;
   }

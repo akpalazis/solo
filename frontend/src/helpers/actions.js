@@ -32,10 +32,16 @@ export const home = () => ({
 });
 
 
+export const settings = () => ({
+  type: SETTINGS,
+});
+
+
 export const WELCOME = 'WELCOME';
 export const TRIPS = 'TRIPS';
 export const ADD = 'ADD';
 export const DISCUSSION = 'DISCUSSION';
+export const SETTINGS = 'SETTINGS';
 
 export const welcome = () => ({
   type: WELCOME,

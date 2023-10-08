@@ -2,8 +2,9 @@ import React from "react";
 import Trips from "./Trips";
 import AddTrip from "./AddTrip"
 import Dis from "./Discussion"
+import Settings from "./Settings"
 import io from "socket.io-client";
-import {add, discussion, logout, setDiscussions, setNotifications, setTrips, trips, welcome} from "../helpers/actions";
+import {add, discussion, logout, settings, setDiscussions, setNotifications, setTrips, trips, welcome} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class User extends React.Component {
@@ -22,10 +23,6 @@ class User extends React.Component {
 
   changeImage = (img) => {
     this.setState({image: img})
-  }
-
-  setUsername = (username) => {
-    this.setState({username: username})
   }
 
   manipulateAlerts= (data) => {
@@ -147,6 +144,7 @@ class User extends React.Component {
           </div>
           Discussion
         </button>
+        <button onClick={this.props.settings} className='submit-button'>User Settings</button>
         <button onClick={this.onLogout} className='submit-button'>Logout</button>
       </div>
     </div>
@@ -173,6 +171,13 @@ class User extends React.Component {
       </div>
       )
     }
+    if (this.props.userPage.page === 'settings'){
+      return(
+      <div className= 'ui segment'>
+        <Settings/>
+      </div>
+      )
+    }
   }
 
   render() {
@@ -196,6 +201,7 @@ const mapDispatchToProps = {
   trips,
   add,
   discussion,
+  settings,
   setNotifications,
   setTrips,
   setDiscussions

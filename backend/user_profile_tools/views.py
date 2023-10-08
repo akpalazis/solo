@@ -3,6 +3,9 @@ import io
 from PIL import Image
 from flask import Blueprint
 from flask import Response
+from flask import jsonify
+from flask import request
+from flask_login import current_user
 
 from backend.main import s3
 
@@ -17,6 +20,13 @@ def get_profile_picture(username):
     # Set the content type based on the image file type (e.g., 'image/jpeg', 'image/png')
     content_type = s3_response['ContentType']
     return Response(image_data, content_type=content_type)
+
+
+@user_profile_tools_blueprint.route('/change-profile-picture', methods=['POST'])
+def change_profile_picture():
+    image = request.files.get("picture")
+    save_profile_picture(current_user.username, image)
+    return jsonify({'message': "Updated Successfully"}), 200
 
 
 def save_profile_picture(username, image):
