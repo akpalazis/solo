@@ -31,8 +31,6 @@ services:
       POSTGRES_DB: db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
-    volumes:
-        - ./backup_db/backup.sql:/docker-entrypoint-initdb.d/db.sql
 
   minio:
     image: minio/minio
@@ -45,8 +43,6 @@ services:
       - "9002:9002"
     networks:
       - my-network
-    volumes:
-      - ./minio/data:/data
     command: server --console-address ":9002" /data
 
 networks:

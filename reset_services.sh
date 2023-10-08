@@ -4,4 +4,6 @@ dropdb -p 5433 db
 sleep 5
 createdb -p 5433 db
 sleep 5
+rm -rf ./minio
+sleep 5
 brew services stop postgresql@14

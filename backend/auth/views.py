@@ -1,17 +1,8 @@
-import io
-
 from flask import Blueprint, request, jsonify
-from flask import Response
-from flask import send_file
-from flask import send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
-from backend.main import login_manager, s3
 from backend.models import User, db
-import os
-import requests
-
-from PIL import Image
+from backend.user_profile_tools.views import save_profile_picture
 
 b_crypt = Bcrypt()
 
@@ -62,18 +53,7 @@ def sing_up():
 
         db.session.add(user)
         db.session.commit()
-        bucket_name = "users"
-        try:
-            # Use the head_bucket method to check if the bucket exists
-            s3.head_bucket(Bucket=bucket_name)
-        except Exception as e:
-            s3.create_bucket(Bucket=bucket_name)
-        img = Image.open(image)
-        resized_img = img.resize((200, 200))
-        img_buffer = io.BytesIO()
-        resized_img.save(img_buffer,format=img.format)
-        img_buffer.seek(0)
-        s3.upload_fileobj(img_buffer, bucket_name, f'{username}/profile_picture.jpg')
+        save_profile_picture(username,image)
 
         return jsonify({'message': 'Account Created Successfully'}), 200
 
@@ -85,13 +65,3 @@ def logout():
     return jsonify({'message': 'Logged Out Successfully'}), 200
 
 
-@auth_blueprint.route('/get-profile-picture/<username>', methods=['GET'])
-def get_profile_picture(username):
-    user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
-    s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
-    image_data = s3_response['Body'].read()
-
-    # Set the content type based on the image file type (e.g., 'image/jpeg', 'image/png')
-    content_type = s3_response['ContentType']
-
-    return Response(image_data, content_type=content_type)
