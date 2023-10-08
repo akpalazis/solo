@@ -12,7 +12,8 @@ auth_blueprint = Blueprint('auth_blueprint', __name__)
 @auth_blueprint.route('/home', methods=['GET'])
 def home():
     if current_user.is_authenticated:
-        return jsonify({'message': 'Access granted'}), 200
+        return jsonify({'message': 'Access granted',
+                        'username': current_user.username}), 200
     else:
         return jsonify({'message': 'Access denied'}), 401
 

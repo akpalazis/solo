@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Login from "./Login";
 import SingUp from "./SingUp";
 import User from "./User";
-import {login, userPage, home, signup} from '../helpers/actions';
+import {login, userPage, home, signup, updateUsername} from '../helpers/actions';
 
 class Select extends React.Component {
   componentDidMount() {
@@ -16,6 +16,7 @@ class Select extends React.Component {
       .then((data) => {
         console.log(data.message)
         if (data.message === 'Access granted') {
+          this.props.updateUsername(data.username);
           this.props.userPage();
         } else {
           this.props.home();
@@ -88,7 +89,8 @@ const mapDispatchToProps = {
   login,
   userPage,
   home,
-  signup
+  signup,
+  updateUsername
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Select);

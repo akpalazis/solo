@@ -12,7 +12,7 @@ class User extends React.Component {
     this.state = {
       n_notification:0,
       socket: null,
-      image: "",
+      username: "",
     };
   }
 
@@ -22,6 +22,10 @@ class User extends React.Component {
 
   changeImage = (img) => {
     this.setState({image: img})
+  }
+
+  setUsername = (username) => {
+    this.setState({username: username})
   }
 
   manipulateAlerts= (data) => {
