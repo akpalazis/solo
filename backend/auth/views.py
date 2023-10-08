@@ -1,4 +1,7 @@
+import io
+
 from flask import Blueprint, request, jsonify
+from flask import Response
 from flask import send_file
 from flask import send_from_directory
 from flask_bcrypt import Bcrypt
@@ -65,11 +68,13 @@ def sing_up():
             s3.head_bucket(Bucket=bucket_name)
         except Exception as e:
             s3.create_bucket(Bucket=bucket_name)
-        image.save(image.filename)
-        img = Image.open(image.filename)
+        img = Image.open(image)
         resized_img = img.resize((200, 200))
-        resized_img.save(image.filename)
-        s3.upload_file(image.filename, bucket_name, f'{username}/profile_picture.jpg')
+        img_buffer = io.BytesIO()
+        resized_img.save(img_buffer,format=img.format)
+        img_buffer.seek(0)
+        s3.upload_fileobj(img_buffer, bucket_name, f'{username}/profile_picture.jpg')
+
         return jsonify({'message': 'Account Created Successfully'}), 200
 
 
@@ -83,32 +88,10 @@ def logout():
 @auth_blueprint.route('/get-profile-picture/<username>', methods=['GET'])
 def get_profile_picture(username):
     user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
-    try:
-        # Attempt to head the object to check its existence
-        s3.head_object(Bucket="users", Key=user_s3_object_key)
-        signed_url = s3.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': 'users', 'Key': user_s3_object_key},
-            ExpiresIn=3000
-        )
-        save_path = "./image2.jpg"
-        save_image_from_url(signed_url, save_path)
-        return send_from_directory("../",save_path)
-    except Exception:
-        return {'url': None}
+    s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
+    image_data = s3_response['Body'].read()
 
+    # Set the content type based on the image file type (e.g., 'image/jpeg', 'image/png')
+    content_type = s3_response['ContentType']
 
-def save_image_from_url(url, save_path):
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            with open(save_path, 'wb') as file:
-                file.write(response.content)
-            return True  # Image saved successfully
-        else:
-            return False  # Image request failed (e.g., 404)
-    except Exception as e:
-        print(f"Error saving image: {e}")
-        return False
-
-# TODO: Delete the images after i dont need them anymore
+    return Response(image_data, content_type=content_type)

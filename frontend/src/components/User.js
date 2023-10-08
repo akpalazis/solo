@@ -21,7 +21,6 @@ class User extends React.Component {
   }
 
   changeImage = (img) => {
-    console.log(img)
     this.setState({image: img})
   }
 
