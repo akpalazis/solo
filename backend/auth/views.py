@@ -1,9 +1,13 @@
 from flask import Blueprint, request, jsonify
+from flask import send_file
+from flask import send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
 from backend.main import login_manager, s3
 from backend.models import User, db
 import os
+import requests
+
 from PIL import Image
 
 b_crypt = Bcrypt()
@@ -65,9 +69,7 @@ def sing_up():
         img = Image.open(image.filename)
         resized_img = img.resize((200, 200))
         resized_img.save(image.filename)
-        image_type = os.path.basename(image.filename).split(".")[-1]
-        file_name = f"{username}.{image_type}"
-        s3.upload_file(image.filename, bucket_name, f'profile_pictures/{file_name}')
+        s3.upload_file(image.filename, bucket_name, f'{username}/profile_picture.jpg')
         return jsonify({'message': 'Account Created Successfully'}), 200
 
 
@@ -80,10 +82,33 @@ def logout():
 
 @auth_blueprint.route('/get-profile-picture/<username>', methods=['GET'])
 def get_profile_picture(username):
-    user_s3_object_key = f'profile_pictures/{username}.jpg'  # Replace with the actual key
-    signed_url = s3.generate_presigned_url(
-        'get_object',
-        Params={'Bucket': 'users', 'Key': user_s3_object_key},
-        ExpiresIn=3000
-    )
-    return {'url': signed_url}
+    user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
+    try:
+        # Attempt to head the object to check its existence
+        s3.head_object(Bucket="users", Key=user_s3_object_key)
+        signed_url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': 'users', 'Key': user_s3_object_key},
+            ExpiresIn=3000
+        )
+        save_path = "./image2.jpg"
+        save_image_from_url(signed_url, save_path)
+        return send_from_directory("../",save_path)
+    except Exception:
+        return {'url': None}
+
+
+def save_image_from_url(url, save_path):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(save_path, 'wb') as file:
+                file.write(response.content)
+            return True  # Image saved successfully
+        else:
+            return False  # Image request failed (e.g., 404)
+    except Exception as e:
+        print(f"Error saving image: {e}")
+        return False
+
+# TODO: Delete the images after i dont need them anymore

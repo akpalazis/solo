@@ -21,7 +21,8 @@ class User extends React.Component {
   }
 
   changeImage = (img) => {
-    this.setState({image: img.url})
+    console.log(img)
+    this.setState({image: img})
   }
 
   manipulateAlerts= (data) => {
@@ -76,11 +77,11 @@ class User extends React.Component {
         console.error('Error:', error);
       });
 
-
     fetch(`/get-profile-picture/${this.props.username}`) // Use the username variable in the URL
-    .then((response) => response.json())
-    .then((data) => {
-    this.changeImage(data);
+    .then((response) => response.blob())
+    .then((blob) => {
+      const imageUrl = URL.createObjectURL(blob);
+      this.changeImage(imageUrl);
     })
     .catch((error) => {
     console.error('Error:', error);

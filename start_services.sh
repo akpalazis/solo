@@ -3,10 +3,10 @@
 # Start PostgreSQL with Homebrew
 brew services start postgresql@14
 
-# Start MinIO with Homebrew
+# Start MinIO
 export MINIO_ROOT_USER="admin"
 export MINIO_ROOT_PASSWORD="password"
-minio server ./minio/data
+minio server --address 0.0.0.0:9001 ./minio/data
 
 cleanup() {
   # Stop PostgreSQL
