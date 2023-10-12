@@ -7,6 +7,7 @@ from backend.models import db, Notification, Discussion, associate_trip_with_dis
 trips_blueprint = Blueprint('trips_blueprint', __name__)
 
 
+@login_required
 def create_trip(user_id, destination):
     new_trip = Trip(
         user_id=user_id,
@@ -17,6 +18,7 @@ def create_trip(user_id, destination):
     return new_trip
 
 
+@login_required
 def create_discussion(user_id, destination):
     new_discussion = Discussion(
         user_id=user_id,

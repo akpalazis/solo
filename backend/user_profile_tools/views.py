@@ -6,6 +6,7 @@ from flask import Response
 from flask import jsonify
 from flask import request
 from flask_login import current_user
+from flask_login import login_required
 
 from backend.main import s3
 
@@ -13,6 +14,7 @@ user_profile_tools_blueprint = Blueprint('user_profile_tools_blueprint', __name_
 
 
 @user_profile_tools_blueprint.route('/get-profile-picture/<username>', methods=['GET'])
+@login_required
 def get_profile_picture(username):
     user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
     s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
@@ -23,12 +25,14 @@ def get_profile_picture(username):
 
 
 @user_profile_tools_blueprint.route('/change-profile-picture', methods=['POST'])
+@login_required
 def change_profile_picture():
     image = request.files.get("picture")
     save_profile_picture(current_user.username, image)
     return jsonify({'message': "Updated Successfully"}), 200
 
 
+@login_required
 def save_profile_picture(username, image):
     bucket_name = "users"
     if image:
