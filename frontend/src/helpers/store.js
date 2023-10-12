@@ -104,11 +104,28 @@ const userNameReducer = (state = initialUsernameState, action) => {
   }
 };
 
+const initialUrlState = {
+    url: "",
+};
+
+const profilePictureReducer = (state= initialUrlState, action) => {
+  switch (action.type){
+    case "SET_PROFILE_PICTURE_URL":
+      return {
+        ...state,
+        url: action.url
+      }
+  default:
+    return state
+}
+};
+
 const rootReducer = combineReducers({
   login: loginReducer,
   user: userReducer,
   trips: tripsReducer,
-  userName: userNameReducer
+  userName: userNameReducer,
+  profilePicture: profilePictureReducer
 });
 
 const store = createStore(rootReducer);

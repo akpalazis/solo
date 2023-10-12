@@ -29,7 +29,7 @@ def get_profile_picture(username):
 def change_profile_picture():
     image = request.files.get("picture")
     save_profile_picture(current_user.username, image)
-    return jsonify({'message': "Updated Successfully"}), 200
+    return get_profile_picture(current_user.username), 200
 
 
 @login_required
@@ -44,5 +44,3 @@ def save_profile_picture(username, image):
     resized_img.save(img_buffer, format=img.format)
     img_buffer.seek(0)
     s3.upload_fileobj(img_buffer, bucket_name, f'{username}/profile_picture.jpg')
-
-

@@ -4,7 +4,18 @@ import AddTrip from "./AddTrip"
 import Dis from "./Discussion"
 import Settings from "./Settings"
 import io from "socket.io-client";
-import {add, discussion, logout, settings, setDiscussions, setNotifications, setTrips, trips, welcome} from "../helpers/actions";
+import {
+  add,
+  discussion,
+  logout,
+  settings,
+  setDiscussions,
+  setNotifications,
+  setTrips,
+  trips,
+  welcome,
+  setProfilePicture
+} from "../helpers/actions";
 import {connect} from "react-redux";
 
 class User extends React.Component {
@@ -22,7 +33,7 @@ class User extends React.Component {
   }
 
   changeImage = (img) => {
-    this.setState({image: img})
+    this.props.setProfilePicture(img)
   }
 
   manipulateAlerts= (data) => {
@@ -128,7 +139,7 @@ class User extends React.Component {
           <div className="user-welcome-container">
         <h2 className="welcome-message">Welcome {this.props.username} !!!</h2>
       <img
-            src={this.state.image} // Replace with the actual image source
+            src={this.props.profilePicture.url}
             alt="User Profile"
             className="profile-image"
           />
@@ -191,7 +202,8 @@ const mapStateToProps = (state) => {
   return {
     page: state.login.page,
     userPage: state.user,
-    username: state.userName.username
+    username: state.userName.username,
+    profilePicture : state.profilePicture
   };
 };
 
@@ -204,7 +216,8 @@ const mapDispatchToProps = {
   settings,
   setNotifications,
   setTrips,
-  setDiscussions
+  setDiscussions,
+  setProfilePicture
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

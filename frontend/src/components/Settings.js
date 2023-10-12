@@ -1,6 +1,8 @@
 import React from "react";
 import {connect} from "react-redux";
 import {welcome} from "../helpers/actions";
+import {setProfilePicture} from "../helpers/actions";
+
 
 class Settings extends React.Component{
   state = {
@@ -22,13 +24,13 @@ class Settings extends React.Component{
       method: 'POST',
       body: formData
     })
-      .then((response) => response.json())
+      .then((response) => response.blob())
       .then((data) => {
-        if (data.message === "Updated Successfully") {
-          // TODO: Change the welcome page to update the image at once, now i need reload
+          const imageUrl = URL.createObjectURL(data);
+          this.props.setProfilePicture(imageUrl)
           this.props.welcome()
         }
-      })
+      )
       .catch((error) => {
         console.log(error.message);
     })
@@ -67,7 +69,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  welcome
+  welcome,
+  setProfilePicture
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

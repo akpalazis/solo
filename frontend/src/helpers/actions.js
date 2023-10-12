@@ -62,6 +62,7 @@ export const discussion = () => ({
 export const SET_NOTIFICATIONS = "SET_NOTIFICATIONS";
 export const SET_TRIPS = "SET_TRIPS";
 export const SET_DISCUSSIONS = "SET_DISCUSSIONS";
+export const SET_PROFILE_PICTURE_URL = "SET_PROFILE_PICTURE_URL";
 
 export const setNotifications = (notifications) => ({
   type: SET_NOTIFICATIONS,
@@ -76,6 +77,11 @@ export const setTrips = (trips) => ({
 export const setDiscussions = (discussions) => ({
   type: SET_DISCUSSIONS,
   discussions: discussions,
+});
+
+export const setProfilePicture = (url) => ({
+  type: SET_PROFILE_PICTURE_URL,
+  url: url,
 });
 
 export const updateUsername = (username) => {
