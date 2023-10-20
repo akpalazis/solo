@@ -35,6 +35,22 @@ def login():
             return jsonify({'message': 'Login failed'}), 401
 
 
+def check_username_availability(username):
+    user = User.query.filter_by(username=username).first()
+    return user is None
+
+
+@auth_blueprint.route('/check-username', methods=['POST'])
+def api_check_username_availability():
+    username = request.args.get('username')
+    if username is None:
+        return jsonify({"error": "Username parameter is missing"}), 400
+
+    is_available = check_username_availability(username)
+
+    return jsonify({"isAvailable": is_available})
+
+
 @auth_blueprint.route('/signup', methods=['POST'])
 def sing_up():
     data = request.form
@@ -54,7 +70,7 @@ def sing_up():
 
         db.session.add(user)
         db.session.commit()
-        save_profile_picture(username,image)
+        save_profile_picture(username, image)
 
         return jsonify({'message': 'Account Created Successfully'}), 200
 
@@ -64,5 +80,3 @@ def sing_up():
 def logout():
     logout_user()
     return jsonify({'message': 'Logged Out Successfully'}), 200
-
-

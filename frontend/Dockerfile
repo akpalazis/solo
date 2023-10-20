@@ -4,14 +4,14 @@ FROM node:14
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the rest of the frontend application code into the container at /app
-COPY . .
-
 # Copy the package.json and package-lock.json files into the container at /app
 COPY package_docker.json ./package.json
 
 # Install Node.js dependencies
 RUN npm install
+
+# Copy the rest of the frontend application code into the container at /app
+COPY . .
 
 # Expose the port that the React development server will run on (usually 3000)
 EXPOSE 3000
