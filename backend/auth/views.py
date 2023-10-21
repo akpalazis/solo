@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
@@ -54,8 +56,13 @@ def api_check_username_availability():
 @auth_blueprint.route('/signup', methods=['POST'])
 def sing_up():
     data = request.form
+    name = data.get('name')
+    last_name = data.get('lastName')
     username = data.get('username')
     password = data.get('password')
+    email = data.get('email')
+    date_of_birth = data.get('dateOfBirth')
+
     existing_user = User.query.filter_by(username=username).first()
     if existing_user:
         return jsonify({'message': 'User already exists'}), 409
@@ -64,8 +71,13 @@ def sing_up():
 
         hashed_password = b_crypt.generate_password_hash(password).decode('utf-8')
 
-        user = User(username=username,
-                    password=hashed_password)
+        user = User(name=name,
+                    last_name=last_name,
+                    username=username,
+                    password=hashed_password,
+                    email=email,
+                    date_of_birth=datetime.fromisoformat(date_of_birth))
+
         db.session.add(user)
         db.session.commit()
         save_init_profile_picture(username)

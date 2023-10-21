@@ -10,9 +10,9 @@ class SingUp extends React.Component {
     password: "",
     repeatPassword: "",
     email: "",
+    dateOfBirth: "",
     userNameError: "",
     isUsernameAvailable: null,
-    dateOfBirth: ""
   }
 
   onError = (msg) => {
@@ -48,8 +48,12 @@ class SingUp extends React.Component {
     event.preventDefault();
     this.clearErrors()
     const formData = new FormData()
+    formData.append('name', this.state.name)
+    formData.append('lastName', this.state.lastName)
     formData.append('username', this.state.username)
     formData.append('password', this.state.password)
+    formData.append('email', this.state.email)
+    formData.append('dateOfBirth', this.state.dateOfBirth)
 
     fetch('/signup', {
       method: 'POST',
@@ -85,17 +89,15 @@ class SingUp extends React.Component {
               onChange = {this.onInputSingUpChange}
             />
           </div>
-
           <div>
             <label>Last Name:</label>
             <input
               placeholder="Last Name"
-              name="last name"
+              name="lastName"
               value={this.state.lastName}
               onChange = {this.onInputSingUpChange}
             />
           </div>
-
           <div>
             <label>Email:</label>
           <input
@@ -106,7 +108,6 @@ class SingUp extends React.Component {
             onChange = {this.onInputSingUpChange}
           />
           </div>
-
           <div>
           <label>Date of Birth:</label>
             <input
@@ -116,7 +117,6 @@ class SingUp extends React.Component {
               onChange={this.onInputSingUpChange}
             />
           </div>
-
           <div>
             <label>Username:</label>
             <input
@@ -152,7 +152,6 @@ class SingUp extends React.Component {
     <p>Passwords do not match.</p>
   )}
       </div>
-
           <div>
             <button onClick={this.sendSingUpRequest}>SignUp</button>
             <button onClick={this.props.home}>Cancel</button>
