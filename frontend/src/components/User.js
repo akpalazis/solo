@@ -88,7 +88,7 @@ class User extends React.Component {
         console.error('Error:', error);
       });
 
-    fetch(`/get-profile-picture/${this.props.username}`) // Use the username variable in the URL
+    fetch("/get-profile/") // Use the username variable in the URL
     .then((response) => response.blob())
     .then((blob) => {
       const imageUrl = URL.createObjectURL(blob);

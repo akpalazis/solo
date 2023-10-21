@@ -12,9 +12,10 @@ from backend.main import s3
 user_profile_tools_blueprint = Blueprint('user_profile_tools_blueprint', __name__)
 
 
-@user_profile_tools_blueprint.route('/get-profile-picture/<username>', methods=['GET'])
+@user_profile_tools_blueprint.route('/get-profile/', methods=['GET'])
 @login_required
-def get_profile_picture(username):
+def get_profile():
+    username = current_user.username
     user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
     s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
     image_data = s3_response['Body'].read()
@@ -27,7 +28,7 @@ def get_profile_picture(username):
 def change_profile_picture():
     image = request.files.get("picture")
     save_profile_picture(current_user.username, image)
-    return get_profile_picture(current_user.username), 200
+    return get_profile(current_user.username), 200
 
 
 @login_required
