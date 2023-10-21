@@ -4,11 +4,15 @@ import {connect} from "react-redux";
 
 class SingUp extends React.Component {
   state = {
+    name: "",
+    lastName:"",
     username: "",
     password: "",
     repeatPassword: "",
+    email: "",
     userNameError: "",
     isUsernameAvailable: null,
+    dateOfBirth: ""
   }
 
   onError = (msg) => {
@@ -73,9 +77,48 @@ class SingUp extends React.Component {
         <h3>{this.state.userNameError}</h3>
         <form>
           <div>
-        <label>Username:</label>
+            <label>Name:</label>
+            <input
+              placeholder="Name"
+              name="name"
+              value={this.state.name}
+              onChange = {this.onInputSingUpChange}
+            />
           </div>
+
           <div>
+            <label>Last Name:</label>
+            <input
+              placeholder="Last Name"
+              name="last name"
+              value={this.state.lastName}
+              onChange = {this.onInputSingUpChange}
+            />
+          </div>
+
+          <div>
+            <label>Email:</label>
+          <input
+            placeholder="Email"
+            name="email"
+            value={this.state.email}
+            type="email"
+            onChange = {this.onInputSingUpChange}
+          />
+          </div>
+
+          <div>
+          <label>Date of Birth:</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={this.state.dateOfBirth}
+              onChange={this.onInputSingUpChange}
+            />
+          </div>
+
+          <div>
+            <label>Username:</label>
             <input
               placeholder="Username"
               name="username"
@@ -86,10 +129,8 @@ class SingUp extends React.Component {
               <p>Username is already taken.</p>
             )}
           </div>
-            <div>
-            <label>Password:</label>
-          </div>
           <div>
+            <label>Password:</label>
             <input
               placeholder="Password"
               name="password"
@@ -100,8 +141,6 @@ class SingUp extends React.Component {
           </div>
           <div>
         <label>Repeat Password:</label>
-      </div>
-      <div>
         <input
           placeholder="Repeat Password"
           name="repeatPassword"
