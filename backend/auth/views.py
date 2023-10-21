@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import current_user, login_user, logout_user, login_required
 from backend.models import User, db
-from backend.user_profile_tools.views import save_profile_picture
+from backend.user_profile_tools.views import save_init_profile_picture
 
 b_crypt = Bcrypt()
 
@@ -56,22 +56,19 @@ def sing_up():
     data = request.form
     username = data.get('username')
     password = data.get('password')
-    image = request.files.get("picture")
     existing_user = User.query.filter_by(username=username).first()
-
     if existing_user:
         return jsonify({'message': 'User already exists'}), 409
 
     else:
+
         hashed_password = b_crypt.generate_password_hash(password).decode('utf-8')
 
         user = User(username=username,
                     password=hashed_password)
-
         db.session.add(user)
         db.session.commit()
-        save_profile_picture(username, image)
-
+        save_init_profile_picture(username)
         return jsonify({'message': 'Account Created Successfully'}), 200
 
 

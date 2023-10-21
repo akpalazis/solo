@@ -3,7 +3,6 @@ import io
 from PIL import Image
 from flask import Blueprint
 from flask import Response
-from flask import jsonify
 from flask import request
 from flask_login import current_user
 from flask_login import login_required
@@ -19,7 +18,6 @@ def get_profile_picture(username):
     user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
     s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
     image_data = s3_response['Body'].read()
-    # Set the content type based on the image file type (e.g., 'image/jpeg', 'image/png')
     content_type = s3_response['ContentType']
     return Response(image_data, content_type=content_type)
 
@@ -35,10 +33,17 @@ def change_profile_picture():
 @login_required
 def save_profile_picture(username, image):
     bucket_name = "users"
-    if image:
-        img = Image.open(image)
-    else:
-        img = Image.open("/Users/Palazis/PycharmProjects/solo/imgs/blank_profile_picture.png")
+    img = Image.open(image)
+    save_to_s3(img, bucket_name, username)
+
+
+def save_init_profile_picture(username):
+    bucket_name = "users"
+    img = Image.open("/Users/Palazis/PycharmProjects/solo/imgs/blank_profile_picture.png")
+    save_to_s3(img, bucket_name, username)
+
+
+def save_to_s3(img, bucket_name, username):
     resized_img = img.resize((200, 200))
     img_buffer = io.BytesIO()
     resized_img.save(img_buffer, format=img.format)

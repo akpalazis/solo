@@ -6,7 +6,7 @@ class SingUp extends React.Component {
   state = {
     username: "",
     password: "",
-    profilePicture: "",
+    repeatPassword: "",
     userNameError: "",
     isUsernameAvailable: null,
   }
@@ -19,15 +19,10 @@ class SingUp extends React.Component {
 
   onInputSingUpChange = evt => {
     const state = Object.assign({}, this.state);
-    if (evt.target.type === 'file') {
-      state[evt.target.name] = evt.target.files[0];
-
-    } else {
       state[evt.target.name] = evt.target.value;
       if (evt.target.name === 'username') {
         this.checkUserNameAvailability(evt.target.value)
       }
-    }
     this.setState(state);
   };
 
@@ -51,7 +46,6 @@ class SingUp extends React.Component {
     const formData = new FormData()
     formData.append('username', this.state.username)
     formData.append('password', this.state.password)
-    formData.append('picture', this.state.profilePicture)
 
     fetch('/signup', {
       method: 'POST',
@@ -99,21 +93,27 @@ class SingUp extends React.Component {
             <input
               placeholder="Password"
               name="password"
+              type = "password"
               value={this.state.password}
               onChange={this.onInputSingUpChange}
             />
           </div>
           <div>
-            <label>Profile Picture:</label>
-          </div>
-          <div>
-            <input
-              name="profilePicture"
-              type="file"
-              accept="image/*"
-              onChange={this.onInputSingUpChange}
-            />
-          </div>
+        <label>Repeat Password:</label>
+      </div>
+      <div>
+        <input
+          placeholder="Repeat Password"
+          name="repeatPassword"
+          type="password"
+          value={this.state.repeatPassword}
+          onChange={this.onInputSingUpChange}
+        />
+        {this.state.password && this.state.repeatPassword && this.state.password !== this.state.repeatPassword && (
+    <p>Passwords do not match.</p>
+  )}
+      </div>
+
           <div>
             <button onClick={this.sendSingUpRequest}>SignUp</button>
             <button onClick={this.props.home}>Cancel</button>
