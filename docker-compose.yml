@@ -9,7 +9,7 @@ services:
       - my-network
     depends_on:
       - db
-      - minio
+      - minio-app
 
   react-app:
     build:
@@ -20,6 +20,7 @@ services:
       - my-network
     depends_on:
       - flask-app
+      - minio-app
 
   db:
     image: postgres:13  # Use the PostgreSQL Docker image
@@ -32,12 +33,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
 
-  minio:
+  minio-app:
     image: minio/minio
     environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
-      - MINIO_API_CORS_ALLOW_ORIGIN='*'
     ports:
       - "9000:9000"
       - "9002:9002"
