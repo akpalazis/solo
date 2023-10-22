@@ -14,7 +14,6 @@ class Select extends React.Component {
     fetch('/home') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.message)
         if (data.message === 'Access granted') {
           this.props.updateUsername(data.username);
           this.props.userPage();

@@ -53,3 +53,6 @@ zope.interface==6.0
 Pillow~=10.0.1
 boto3~=1.28.62
 requests~=2.31.0
+flask-graphql
+graphene
+graphene-sqlalchemy
