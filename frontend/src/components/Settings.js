@@ -24,10 +24,9 @@ class Settings extends React.Component{
       method: 'POST',
       body: formData
     })
-      .then((response) => response.blob())
+      .then((response) => response.json())
       .then((data) => {
-          const imageUrl = URL.createObjectURL(data);
-          this.props.setProfilePicture(imageUrl)
+          this.props.setProfilePicture(`data:image/jpeg;base64,${data.base64ImageData}`)
           this.props.welcome()
         }
       )

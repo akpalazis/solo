@@ -22,7 +22,7 @@ class User extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      n_notification:0,
+      n_notification: 0,
       socket: null,
       username: "",
     };
@@ -36,7 +36,7 @@ class User extends React.Component {
     this.props.setProfilePicture(img)
   }
 
-  manipulateAlerts= (data) => {
+  manipulateAlerts = (data) => {
     const unreadNotifications = data.filter((notification) => !notification.is_read);
     const n = unreadNotifications.length;
     this.changeNotificationNumber(n)
@@ -60,12 +60,12 @@ class User extends React.Component {
       })
       .catch((error) => {
         console.error('Error:', error);
-        this.setState({ errorMessage: 'Error fetching data.' });
+        this.setState({errorMessage: 'Error fetching data.'});
       });
   }
 
   setSocket = (socket) => {
-    this.setState({socket:socket})
+    this.setState({socket: socket})
   }
 
   componentDidMount() {
@@ -88,15 +88,30 @@ class User extends React.Component {
         console.error('Error:', error);
       });
 
-    fetch("/get-profile/") // Use the username variable in the URL
-    .then((response) => response.blob())
-    .then((blob) => {
-      const imageUrl = URL.createObjectURL(blob);
-      this.changeImage(imageUrl);
+    fetch(`/graphql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `{
+        getProfile {
+          base64ImageData
+        }
+      }`,
+      }),
     })
+      .then((response) => response.json())
+      .then((json) => {
+        const imageBytes = json.data.getProfile.base64ImageData;
+        const imageUrl = `data:image/jpeg;base64,${imageBytes}`;
+        this.changeImage(imageUrl);
+      })
     .catch((error) => {
     console.error('Error:', error);
     });
+
+
   }
 
   unsubscribe() {

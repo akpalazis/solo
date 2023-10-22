@@ -1,3 +1,4 @@
+import base64
 import io
 
 from PIL import Image
@@ -16,11 +17,11 @@ user_profile_tools_blueprint = Blueprint('user_profile_tools_blueprint', __name_
 @login_required
 def get_profile():
     username = current_user.username
-    user_s3_object_key = f'{username}/profile_picture.jpg'  # Replace with the actual key
-    s3_response = s3.get_object(Bucket='users', Key=user_s3_object_key)
-    image_data = s3_response['Body'].read()
-    content_type = s3_response['ContentType']
-    return Response(image_data, content_type=content_type)
+    user_s3_object_key = f'{username}/profile_picture.jpg'
+    response = s3.get_object(Bucket="users", Key=user_s3_object_key)
+    image_data = response['Body'].read()
+    base64_string = base64.b64encode(image_data).decode('utf-8')
+    return base64_string
 
 
 @user_profile_tools_blueprint.route('/change-profile-picture', methods=['POST'])
@@ -28,7 +29,7 @@ def get_profile():
 def change_profile_picture():
     image = request.files.get("picture")
     save_profile_picture(current_user.username, image)
-    return get_profile(current_user.username), 200
+    return {'base64ImageData': get_profile()}, 200
 
 
 @login_required
