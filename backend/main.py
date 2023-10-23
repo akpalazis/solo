@@ -1,5 +1,6 @@
 import base64
 import os
+from urllib.parse import urlparse
 
 from flask import Flask
 from flask_graphql import GraphQLView
@@ -62,8 +63,9 @@ class Query(ObjectType):
         url = s3.generate_presigned_url('get_object',
                                         Params={'Bucket': "users", 'Key': user_s3_object_key},
                                         ExpiresIn=3600)
-        print(url)
-        return ImageUrl(image_url=url)
+        parsed_url = urlparse(url)
+        send_url = f"{parsed_url.path}?{parsed_url.query}"
+        return ImageUrl(image_url=send_url)
 
 
 # Create a GraphQL schema with the Query type
