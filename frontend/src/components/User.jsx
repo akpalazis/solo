@@ -25,6 +25,7 @@ class User extends React.Component {
       n_notification: 0,
       socket: null,
       username: "",
+      profPict: ""
     };
   }
 
@@ -43,7 +44,7 @@ class User extends React.Component {
   }
 
   checkForAlerts = () => {
-    fetch('/notifications')
+    fetch('api/notifications')
       .then((response) => response.json())
       .then((data) => {
         const json_list = data.json_list
@@ -53,7 +54,7 @@ class User extends React.Component {
       .catch((error) => {
         console.error('Error:', error);
       });
-    fetch('/userdiscussion') // Replace with your API endpoint
+    fetch('api/userdiscussion') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
         this.props.setDiscussions(data.json_list);
@@ -79,7 +80,7 @@ class User extends React.Component {
     });
     this.checkForAlerts()
 
-    fetch('/trips') // Replace with your API endpoint
+    fetch('api/trips') // Replace with your API endpoint
       .then((response) => response.json())
       .then((data) => {
         this.props.setTrips(data.json_list)
@@ -88,7 +89,7 @@ class User extends React.Component {
         console.error('Error:', error);
       });
 
-    fetch(`/graphql`, {
+    fetch(`api/graphql`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,6 +112,28 @@ class User extends React.Component {
     console.error('Error:', error);
     });
 
+    fetch(`api/graphql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `{
+        getUrl {
+          imageUrl
+        }
+      }`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        const url = json.data.getUrl.imageUrl;
+        this.setState({profPict:url});
+      })
+    .catch((error) => {
+    console.error('Error:', error);
+    });
+
 
   }
 
@@ -128,7 +151,7 @@ class User extends React.Component {
   }
 
   onLogout = () => {
-    fetch('/logout', {
+    fetch('api/logout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -155,6 +178,11 @@ class User extends React.Component {
         <h2 className="welcome-message">Welcome {this.props.username} !!!</h2>
       <img
             src={this.props.profilePicture.url}
+            alt="User Profile"
+            className="profile-image"
+          />
+      <img
+            src={this.state.profPict}
             alt="User Profile"
             className="profile-image"
           />

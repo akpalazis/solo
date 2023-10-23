@@ -55,7 +55,7 @@ class SingUp extends React.Component {
     formData.append('email', this.state.email)
     formData.append('dateOfBirth', this.state.dateOfBirth)
 
-    fetch('/signup', {
+    fetch('api/signup', {
       method: 'POST',
       body: formData
     })
@@ -169,7 +169,7 @@ class SingUp extends React.Component {
 
   checkUserNameAvailability(username) {
     // Make an API request to check username availability
-    fetch(`/check-username?username=${username}`, {
+    fetch(`api/check-username?username=${username}`, {
       method: 'POST',
       body: username
     })

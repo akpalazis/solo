@@ -5,7 +5,7 @@ FROM node:14
 WORKDIR /app
 
 
-COPY docker_files/package_docker.json ./package.json
+COPY package.json ./package.json
 # Install Node.js dependencies
 RUN npm install
 COPY . .
@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the React development server
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

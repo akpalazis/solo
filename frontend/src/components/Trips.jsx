@@ -14,7 +14,7 @@ class Trips extends React.Component {
   };
 
   deleteTrip(tripId){
-    fetch(`/deletetrip/${tripId}`, {
+    fetch(`api/deletetrip/${tripId}`, {
       method: 'DELETE',
       headers: {
       'Content-Type': 'application/json'

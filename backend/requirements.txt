@@ -56,3 +56,4 @@ requests~=2.31.0
 flask-graphql
 graphene
 graphene-sqlalchemy
+python-dotenv

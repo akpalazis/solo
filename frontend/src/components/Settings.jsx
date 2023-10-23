@@ -20,7 +20,7 @@ class Settings extends React.Component{
     const formData = new FormData()
     formData.append('picture',this.state.profilePicture)
 
-    fetch('/change-profile-picture', {
+    fetch('api/change-profile-picture', {
       method: 'POST',
       body: formData
     })

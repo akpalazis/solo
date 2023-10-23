@@ -30,7 +30,7 @@ class Login extends React.Component {
   sendLoginRequest = (event) => {
     event.preventDefault();
     const {username, password} = this.state;
-    fetch('/login', {
+    fetch('api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

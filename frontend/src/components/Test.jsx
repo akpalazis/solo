@@ -11,7 +11,7 @@ class Test extends Component {
 
     // Make an HTTP request to fetch the profile picture URL
     try {
-      const response = await fetch(`/test`);
+      const response = await fetch(`api/test`);
       if (response.ok) {
         const data = await response.json();
         this.setState({ profilePictureUrl: data.profilePictureUrl });

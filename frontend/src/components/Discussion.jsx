@@ -8,7 +8,7 @@ class Discussion extends React.Component {
   };
 
   markDiscussionAsRead = (notification_id) => {
-    fetch(`/markasread/${notification_id}`, {
+    fetch(`api/markasread/${notification_id}`, {
       method: 'PUT',
     })
     .then((response) => {

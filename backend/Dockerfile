@@ -4,9 +4,9 @@ FROM python:3.8
 # Set the working directory inside the container
 WORKDIR /backend
 
+ENV DOCKER_ENV=true
 # Copy the requirements file into the container
 COPY ./requirements.txt .
-
 # Install Python dependencies
 RUN pip install -r requirements.txt
 

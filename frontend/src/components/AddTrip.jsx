@@ -29,7 +29,7 @@ class AddTrip extends React.Component {
       destination
     } = this.state;
 
-    fetch('/addtrip', {
+    fetch('api/addtrip', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

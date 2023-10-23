@@ -7,6 +7,14 @@ services:
       - "5000:5000"
     networks:
       - my-network
+    environment:
+      - DEBUG=True
+      - SQLALCHEMY_TRACK_MODIFICATIONS=False
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:pass@db:5432/db
+      - SECRET_KEY=abc
+      - SESSION_TYPE:=ilesystem
+      - MINIO=http://minio-app:9000
+
     depends_on:
       - db
       - minio-app
@@ -21,6 +29,9 @@ services:
     depends_on:
       - flask-app
       - minio-app
+    environment:
+      - VITE_BASE_URL=http://flask-app:5000
+      - MINIO_BASE_URL=http://minio-app:9000
 
   db:
     image: postgres:13  # Use the PostgreSQL Docker image
