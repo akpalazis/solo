@@ -17,6 +17,7 @@ import {
   setProfilePicture
 } from "../helpers/actions";
 import {connect} from "react-redux";
+import "./users.scss"
 
 class User extends React.Component {
   constructor(props) {
@@ -25,7 +26,6 @@ class User extends React.Component {
       n_notification: 0,
       socket: null,
       username: "",
-      profPict: ""
     };
   }
 
@@ -96,29 +96,6 @@ class User extends React.Component {
       },
       body: JSON.stringify({
         query: `{
-        getProfile {
-          base64ImageData
-        }
-      }`,
-      }),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        const imageBytes = json.data.getProfile.base64ImageData;
-        const imageUrl = `data:image/jpeg;base64,${imageBytes}`;
-        this.changeImage(imageUrl);
-      })
-    .catch((error) => {
-    console.error('Error:', error);
-    });
-
-    fetch(`api/graphql`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: `{
         getUrl {
           imageUrl
         }
@@ -128,8 +105,7 @@ class User extends React.Component {
       .then((response) => response.json())
       .then((json) => {
         const url = `/storage${json.data.getUrl.imageUrl}`;
-        this.setState({profPict:url});
-      })
+        this.changeImage(url);      })
     .catch((error) => {
     console.error('Error:', error);
     });
@@ -172,33 +148,33 @@ class User extends React.Component {
     if (this.props.userPage.page === 'welcome') {
       return (
         <div>
-          <div className="user-welcome-container">
-        <h2 className="welcome-message">Welcome {this.props.username} !!!</h2>
-      <img
+        <h1>Welcome {this.props.username} !!!</h1>
+
+          <div className="container">
+          <img
             src={this.props.profilePicture.url}
             alt="User Profile"
             className="profile-image"
           />
-      <img
-            src={this.state.profPict}
-            alt="User Profile"
-            className="profile-image"
-          />
-      </div>
-      <div className="buttons-container">
+          </div>
+      <div>
         <button onClick={this.props.trips}>Trip Planer</button>
         <button onClick={this.props.add}>Add Trip</button>
-        <button className="notification-icon" onClick={this.props.discussion}>
-          <div>
-            {this.state.n_notification > 0 && <span className="badge">
-              <i className="fa fa-bell"/>
-              {this.state.n_notification}</span>}
-          </div>
+        <button onClick={this.props.discussion}>
           Discussion
+          <div>
+            {
+              this.state.n_notification > 0 &&
+              <span className="badge">
+              {
+                this.state.n_notification}
+              </span>
+            }
+          </div>
         </button>
-        <button onClick={this.props.settings} className='submit-button'>User Settings</button>
-        <button onClick={this.onLogout} className='submit-button'>Logout</button>
-      </div>
+        <button onClick={this.props.settings}>User Settings</button>
+        <button onClick={this.onLogout}>Logout</button>
+    </div>
     </div>
       )
     }

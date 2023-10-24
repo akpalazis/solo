@@ -70,7 +70,6 @@ class Select extends React.Component {
     if (this.props.page === 'userPage'){
       return (
         <div className='ui segment'>
-          <h1>User Page</h1>
           <User/>
         </div>
       )

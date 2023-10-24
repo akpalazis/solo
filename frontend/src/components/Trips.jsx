@@ -1,7 +1,8 @@
 import React from "react";
 import {welcome,setTrips} from "../helpers/actions";
 import {connect} from "react-redux";
-
+import "./trips.scss"
+import TripCard from "./TripCard";
 class Trips extends React.Component {
   state = {
     errorMessage: ""
@@ -13,7 +14,7 @@ class Trips extends React.Component {
     this.setState(state);
   };
 
-  deleteTrip(tripId){
+  deleteTrip = (tripId)=>{
     fetch(`api/deletetrip/${tripId}`, {
       method: 'DELETE',
       headers: {
@@ -27,25 +28,19 @@ class Trips extends React.Component {
       .catch((error) => {
         this.onError(error.message);
     })
-  };
-
+  }
 
   render() {
     return (
       <div>
-      <h2>Welcome To Trip Planner</h2>
+      <h1>Welcome To Trip Planner</h1>
       <h4>{this.state.errorMessage}</h4>
       <form>
-          <div>
+        <div className="container">
             {
               this.props.trips.map((trip) => (
-              <div key={trip.id} className="card">
-                <div className="destination">
-                  <p>
-                    Destination: {trip.destination}
-                    <label onClick={() => this.deleteTrip(trip.id)}> [x] </label>
-                  </p>
-                </div>
+                <div key={trip.id} className="card">
+               <TripCard id={trip.id} destination={trip.destination} deleteTrip={this.deleteTrip}/>
               </div>
             ))}
           </div>
