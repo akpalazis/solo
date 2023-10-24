@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from "react-select";
 import { countries } from 'country-list-json';
+import moment from 'moment'; // Import the moment library
 
 class AddTrip extends React.Component {
    state = {
@@ -43,7 +44,9 @@ class AddTrip extends React.Component {
   addTrip = (event) => {
     event.preventDefault();
     const {
-      destination
+      destination,
+      startDate,
+      endDate
     } = this.state;
 
     fetch('api/addtrip', {
@@ -54,6 +57,8 @@ class AddTrip extends React.Component {
       body: JSON.stringify(
         {
           destination : destination,
+          startDate : moment(startDate).format("yyyy/MM/DD"),
+          endDate : moment(endDate).format("yyyy/MM/DD"),
         })
     })
       .then((response) => {
@@ -97,9 +102,10 @@ class AddTrip extends React.Component {
             <DatePicker
                 name="startDate"
                 selected={this.state.startDate}
-                onChange={this.onStartDate}
+                onChange={ this.onStartDate}
                 startDate={this.state.startDate}
                 endDate={this.state.endDate}
+                dateFormat="dd/MM/yyyy"
                 selectsRange
             />
           </div>

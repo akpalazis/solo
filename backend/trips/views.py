@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -16,17 +18,6 @@ trips_blueprint = Blueprint('trips_blueprint', __name__)
 
 
 @login_required
-def create_trip(user_id, destination):
-    new_trip = Trip(
-        user_id=user_id,
-        destination=destination,
-    )
-    db.session.add(new_trip)  # Add the new trip to the session
-    db.session.commit()  #
-    return new_trip
-
-
-@login_required
 def create_discussion(user_id, destination):
     new_discussion = Discussion(
         user_id=user_id,
@@ -42,11 +33,20 @@ def create_discussion(user_id, destination):
 def add_trip():
     data = request.json
     destination = data.get("destination")
+    start_date = data.get("startDate")
+    end_date = data.get("endDate")
 
     if is_user_trip_exists(current_user, destination):
         return jsonify({'message': 'Trip already exists'}), 409
 
-    new_trip = create_trip(current_user.id, destination)
+    new_trip = Trip(
+        user_id=current_user.id,
+        destination=destination,
+        start_date=start_date,
+        end_date=end_date
+    )
+    db.session.add(new_trip)  # Add the new trip to the session
+    db.session.commit()  #
 
     new_discussion = create_discussion(current_user.id, destination)
 
@@ -106,6 +106,8 @@ def get_user_trips():
                 "id": t.id,
                 "user": t.user_id,
                 "destination": t.destination,
+                "startDate": t.start_date,
+                "endDate": t.end_date
             }
         )
     return jsonify(json_list=total)

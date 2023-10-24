@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 
 const Cart = (props) => {
   return (
@@ -8,7 +9,9 @@ const Cart = (props) => {
                     <h1>{props.destination}</h1>
                   </div>
                   <div className="card-details">
-                    <span><i className="fa fa-calendar"></i>AUG 4</span>
+                    <span><i className="fa fa-calendar"></i>{moment(props.startDate).format("DD/MM/yyyy")}</span>
+                    <span><i className="fa fa-calendar"></i>-</span>
+                    <span><i className="fa fa-calendar"></i>{moment(props.endDate).format("DD/MM/yyyy")}</span>
                   <div className="delete" onClick={() => props.deleteTrip(props.id)} >Delete</div>
                 </div>
               </div>

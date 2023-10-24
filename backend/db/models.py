@@ -38,6 +38,8 @@ class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
     associated_discussions = db.relationship('Discussion', secondary=trip_discussion_association, backref='trips', lazy=True)
 
 

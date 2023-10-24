@@ -40,7 +40,11 @@ class Trips extends React.Component {
             {
               this.props.trips.map((trip) => (
                 <div key={trip.id} className="card">
-               <TripCard id={trip.id} destination={trip.destination} deleteTrip={this.deleteTrip}/>
+               <TripCard id={trip.id}
+                         destination={trip.destination}
+                         startDate={trip.startDate}
+                         endDate={trip.endDate}
+                         deleteTrip={this.deleteTrip}/>
               </div>
             ))}
           </div>
