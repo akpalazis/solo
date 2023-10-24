@@ -1,4 +1,6 @@
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO
+from flask_socketio import join_room
+from flask_socketio import leave_room
 
 
 class Socket(SocketIO):

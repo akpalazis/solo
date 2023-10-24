@@ -3,12 +3,11 @@ import io
 
 from PIL import Image
 from flask import Blueprint
-from flask import Response
 from flask import request
 from flask_login import current_user
 from flask_login import login_required
 
-from backend.main import s3
+from backend.s3.views import s3
 
 user_profile_tools_blueprint = Blueprint('user_profile_tools_blueprint', __name__)
 

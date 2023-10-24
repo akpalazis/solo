@@ -1,8 +1,16 @@
-from flask import Blueprint, jsonify, request
-from flask_login import current_user, login_required
+from flask import Blueprint
+from flask import jsonify
+from flask import request
+from flask_login import current_user
+from flask_login import login_required
+
+from backend.db.models import Discussion
+from backend.db.models import Notification
+from backend.db.models import Trip
+from backend.db.models import associate_trip_with_discussion
+from backend.db.models import db
 from backend.helpers.db_helper import is_user_trip_exists
-from backend.main import socket_io
-from backend.models import db, Notification, Discussion, associate_trip_with_discussion, User, Trip
+from backend.app_helpers import socket_io
 
 trips_blueprint = Blueprint('trips_blueprint', __name__)
 
@@ -63,25 +71,6 @@ def add_trip():
 
         socket_io.new_alert()
     return get_user_trips(), 201
-
-
-@trips_blueprint.route('/markasread/<int:notification_id>', methods=['PUT'])
-@login_required
-def update_notification(notification_id):
-    # Find the notification in the database
-    notification = db.session.get(Notification, notification_id)
-    if not notification:
-        return jsonify({'error': 'Notification not found'}), 404
-
-    # Update the notification record
-    notification.is_read = True
-
-    # Save the changes to the database
-    db.session.commit()
-
-    # Optionally, you can return a response to the frontend to indicate the update was successful
-    socket_io.new_alert()
-    return jsonify({'': ""}), 201
 
 
 @trips_blueprint.route('/deletetrip/<int:trip_id>', methods=['DELETE'])

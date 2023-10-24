@@ -1,9 +1,16 @@
 from datetime import datetime
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
+from flask import jsonify
+from flask import request
 from flask_bcrypt import Bcrypt
-from flask_login import current_user, login_user, logout_user, login_required
-from backend.models import User, db
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import logout_user
+
+from backend.db.models import User
+from backend.db.models import db
 from backend.user_profile_tools.views import save_init_profile_picture
 
 b_crypt = Bcrypt()

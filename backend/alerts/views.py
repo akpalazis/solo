@@ -1,7 +1,11 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
+from flask import jsonify
 from flask_login import current_user
-from backend.models import User, db, Notification
-from backend.main import socket_io
+
+from backend.db.models import Notification
+from backend.db.models import db
+from backend.app_helpers import socket_io
+
 alert_blueprint = Blueprint('alert_blueprint', __name__)
 
 
@@ -19,21 +23,3 @@ def notification():
             "is_read": alert.is_read
         })
     return jsonify(json_list=total)
-
-
-@alert_blueprint.route('/markasread/<int:notification_id>', methods=['PUT'])
-def update_notification(notification_id):
-    # Find the notification in the database
-    notification = db.session.get(Notification, notification_id)
-    if not notification:
-        return jsonify({'error': 'Notification not found'}), 404
-
-    # Update the notification record
-    notification.is_read = True
-
-    # Save the changes to the database
-    db.session.commit()
-
-    # Optionally, you can return a response to the frontend to indicate the update was successful
-    socket_io.new_alert()
-    return jsonify({'': ""}), 201
