@@ -1,21 +1,38 @@
-import React from "react";
-import {welcome,setTrips} from "../helpers/actions";
+import React from 'react'
+import {setTrips, welcome} from "../helpers/actions";
 import {connect} from "react-redux";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Select from "react-select";
+import { countries } from 'country-list-json';
 
 class AddTrip extends React.Component {
    state = {
      destination: "",
+     startDate: null,
+     endDate: null,
      errorMessage:""
   }
 
-  onChange =(event) => {
-   const {name, value} = event.target
-    const state = {
-     ...this.state,
-     [name] : value
-   }
-   this.setState(state)
+  onStartDate = (date_range) => {
+     const [start,end] = date_range
+      const state = {
+        ...this.state,
+        ["startDate"]: start,
+        ["endDate"]: end
+      }
+      this.setState(state)
   }
+
+  onDestinationChange = (selection) => {
+      const destination = selection.value
+      const state = {
+        ...this.state,
+        ["destination"]: destination
+      }
+      this.setState(state)
+  }
+
 
   onError = (msg) => {
     const state =  Object.assign({}, this.state);
@@ -56,8 +73,14 @@ class AddTrip extends React.Component {
     })
   };
 
+
   render() {
-    return (
+  const countryOptions = countries.map((country) => ({
+    value: country.name,
+    label: `${country.name} ${country.flag}`,
+  }));
+  const isButtonDisabled = !this.state.destination || !this.state.startDate || !this.state.endDate;
+  return (
       <div>
         <h2>Welcome To Trip Planner</h2>
         <h3>Add New Trip</h3>
@@ -65,16 +88,25 @@ class AddTrip extends React.Component {
         <form>
           <div>
             <label htmlFor="destination">Destination:</label>
-            <input
-              type="text"
-              name="destination"
-              value={this.state.destination}
-              onChange={this.onChange}
-              required
+            <Select
+              value={countryOptions.find((option) => option.value === this.state.destination)}
+              onChange={this.onDestinationChange}
+              options={countryOptions}
+              placeholder="Select Country"
+            />
+            <DatePicker
+                name="startDate"
+                selected={this.state.startDate}
+                onChange={this.onStartDate}
+                startDate={this.state.startDate}
+                endDate={this.state.endDate}
+                selectsRange
             />
           </div>
           <div>
-          <button type="submit" onClick={this.addTrip}>Add Trip</button>
+          <button type="submit" onClick={this.addTrip} disabled={isButtonDisabled}>
+            Add Trip
+          </button>
           <button onClick={this.props.welcome}>Go Back</button>
           </div>
         </form>
