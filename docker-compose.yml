@@ -28,10 +28,9 @@ services:
       - my-network
     depends_on:
       - flask-app
-      - minio-app
     environment:
       - VITE_BASE_URL=http://flask-app:5000
-      - MINIO_BASE_URL=http://minio-app:9000
+      - VITE_MINIO_URL=http://minio-app:9000
 
   db:
     image: postgres:13  # Use the PostgreSQL Docker image

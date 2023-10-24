@@ -13,10 +13,10 @@ export default ({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
         '/storage': {
-          target: process.env.MINIO_BASE_URL,
+          target: process.env.VITE_MINIO_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/storage/, ''),
-        }
+        },
       },
       watch:{
         usePolling: true,

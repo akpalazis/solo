@@ -65,6 +65,8 @@ class Query(ObjectType):
                                         ExpiresIn=3600)
         parsed_url = urlparse(url)
         send_url = f"{parsed_url.path}?{parsed_url.query}"
+        print(url)
+        print(send_url)
         return ImageUrl(image_url=send_url)
 
 

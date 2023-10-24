@@ -127,14 +127,12 @@ class User extends React.Component {
     })
       .then((response) => response.json())
       .then((json) => {
-        const url = `storage/${json.data.getUrl.imageUrl}`;
+        const url = `/storage${json.data.getUrl.imageUrl}`;
         this.setState({profPict:url});
       })
     .catch((error) => {
     console.error('Error:', error);
     });
-
-
   }
 
   unsubscribe() {
