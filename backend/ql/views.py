@@ -1,9 +1,11 @@
 import base64
 from urllib.parse import urlparse
+
 from flask_login import current_user
 from graphene import Field
 from graphene import ObjectType
 from graphene import String
+
 from backend.s3.views import s3
 
 

@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_login import current_user
 from flask_login import login_required
 
-from backend.app import socket_io
+from backend.app_helpers import socket_io
 from backend.db.models import Notification
 from backend.db.models import db
 
@@ -37,8 +37,6 @@ def update_notification(notification_id):
 
     # Save the changes to the database
     db.session.commit()
-
     # Optionally, you can return a response to the frontend to indicate the update was successful
     socket_io.new_alert()
     return jsonify({'': ""}), 201
-

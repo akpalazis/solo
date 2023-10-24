@@ -4,13 +4,13 @@ from flask import request
 from flask_login import current_user
 from flask_login import login_required
 
+from backend.app_helpers import socket_io
 from backend.db.models import Discussion
 from backend.db.models import Notification
 from backend.db.models import Trip
 from backend.db.models import associate_trip_with_discussion
 from backend.db.models import db
 from backend.helpers.db_helper import is_user_trip_exists
-from backend.app_helpers import socket_io
 
 trips_blueprint = Blueprint('trips_blueprint', __name__)
 
