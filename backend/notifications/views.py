@@ -3,9 +3,9 @@ from flask import jsonify
 from flask_login import current_user
 from flask_login import login_required
 
-from backend.app_helpers import socket_io
-from backend.db.models import Notification
-from backend.db.models import db
+from db.models import Notification
+from db.models import db
+from helpers.app_helpers import socket_io
 
 notifications_blueprint = Blueprint('auth', __name__)
 

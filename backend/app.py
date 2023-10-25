@@ -1,17 +1,17 @@
 from flask_cors import CORS
 from flask_graphql import GraphQLView
 
-from backend.app_helpers import app
-from backend.app_helpers import login_manager
-from backend.app_helpers import schema
-from backend.app_helpers import socket_io
-from backend.auth.views import auth_blueprint
-from backend.db.models import User
-from backend.db.models import db
-from backend.discussions.views import discussions_blueprint
-from backend.notifications.views import notifications_blueprint
-from backend.trips.views import trips_blueprint
-from backend.user_profile_tools.views import user_profile_tools_blueprint
+from auth.views import auth_blueprint
+from db.models import User
+from db.models import db
+from discussions.views import discussions_blueprint
+from helpers.app_helpers import app
+from helpers.app_helpers import login_manager
+from helpers.app_helpers import schema
+from helpers.app_helpers import socket_io
+from notifications.views import notifications_blueprint
+from trips.views import trips_blueprint
+from user_profile_tools.views import user_profile_tools_blueprint
 
 app.config.from_pyfile('config.py')
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})

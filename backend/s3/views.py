@@ -1,7 +1,7 @@
 import boto3
 from botocore.exceptions import ClientError
 
-from backend import config
+from helpers import config
 
 
 def create_bucket(bucket_name):

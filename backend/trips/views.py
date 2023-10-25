@@ -1,18 +1,16 @@
-from datetime import datetime
-
 from flask import Blueprint
 from flask import jsonify
 from flask import request
 from flask_login import current_user
 from flask_login import login_required
 
-from backend.app_helpers import socket_io
-from backend.db.models import Discussion
-from backend.db.models import Notification
-from backend.db.models import Trip
-from backend.db.models import associate_trip_with_discussion
-from backend.db.models import db
-from backend.helpers.db_helper import is_user_trip_exists
+from db.models import Discussion
+from db.models import Notification
+from db.models import Trip
+from db.models import associate_trip_with_discussion
+from db.models import db
+from helpers.app_helpers import socket_io
+from helpers.db_helper import is_user_trip_exists
 
 trips_blueprint = Blueprint('trips_blueprint', __name__)
 

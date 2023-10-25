@@ -6,7 +6,7 @@ from graphene import Field
 from graphene import ObjectType
 from graphene import String
 
-from backend.s3.views import s3
+from s3.views import s3
 
 
 # Define the ProfilePictureType

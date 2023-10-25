@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_login import current_user
 from flask_login import login_required
 
-from backend.db.models import Discussion
+from db.models import Discussion
 
 discussions_blueprint = Blueprint('discussions_blueprint', __name__)
 

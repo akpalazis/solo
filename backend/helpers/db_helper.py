@@ -1,4 +1,4 @@
-from backend.db.models import Trip
+from db.models import Trip
 
 
 def is_user_trip_exists(user, destination):

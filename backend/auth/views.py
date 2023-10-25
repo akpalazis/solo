@@ -9,9 +9,9 @@ from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
 
-from backend.db.models import User
-from backend.db.models import db
-from backend.user_profile_tools.views import save_init_profile_picture
+from db.models import User
+from db.models import db
+from user_profile_tools.views import save_init_profile_picture
 
 b_crypt = Bcrypt()
 
