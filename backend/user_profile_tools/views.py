@@ -1,5 +1,5 @@
-import base64
 import io
+from urllib.parse import urlparse
 
 from PIL import Image
 from flask import Blueprint
@@ -17,18 +17,19 @@ user_profile_tools_blueprint = Blueprint('user_profile_tools_blueprint', __name_
 def get_profile():
     username = current_user.username
     user_s3_object_key = f'{username}/profile_picture.jpg'
-    response = s3.get_object(Bucket="users", Key=user_s3_object_key)
-    image_data = response['Body'].read()
-    base64_string = base64.b64encode(image_data).decode('utf-8')
-    return base64_string
-
+    url = s3.generate_presigned_url('get_object',
+                                    Params={'Bucket': "users", 'Key': user_s3_object_key},
+                                    ExpiresIn=3600)
+    parsed_url = urlparse(url)
+    send_url = f"{parsed_url.path}?{parsed_url.query}"
+    return send_url
 
 @user_profile_tools_blueprint.route('/change-profile-picture', methods=['POST'])
 @login_required
 def change_profile_picture():
     image = request.files.get("picture")
     save_profile_picture(current_user.username, image)
-    return {'base64ImageData': get_profile()}, 200
+    return {"url":get_profile()}, 200
 
 
 @login_required
@@ -39,9 +40,13 @@ def save_profile_picture(username, image):
 
 
 def save_init_profile_picture(username):
+    user_s3_object_key = f'{username}/profile_picture.jpg'
     bucket_name = "users"
-    img = Image.open("/Users/Palazis/PycharmProjects/solo/imgs/blank_profile_picture.png")
-    save_to_s3(img, bucket_name, username)
+    s3.copy_object(
+        CopySource={'Bucket': bucket_name, 'Key': "blank_profile_picture.png"},
+        Bucket=bucket_name,
+        Key=user_s3_object_key
+    )
 
 
 def save_to_s3(img, bucket_name, username):

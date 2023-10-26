@@ -1,7 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {welcome} from "../helpers/actions";
-import {setProfilePicture} from "../helpers/actions";
+import {setProfilePicture, welcome} from "../helpers/actions";
 
 
 class Settings extends React.Component{
@@ -26,8 +25,9 @@ class Settings extends React.Component{
     })
       .then((response) => response.json())
       .then((data) => {
-          this.props.setProfilePicture(`data:image/jpeg;base64,${data.base64ImageData}`)
-          this.props.welcome()
+        const url = `/storage${data.url}`;
+        this.props.setProfilePicture(url)
+        this.props.welcome()
         }
       )
       .catch((error) => {

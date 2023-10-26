@@ -8,13 +8,13 @@ import {
   add,
   discussion,
   logout,
-  settings,
   setDiscussions,
   setNotifications,
+  setProfilePicture,
+  settings,
   setTrips,
   trips,
-  welcome,
-  setProfilePicture
+  welcome
 } from "../helpers/actions";
 import {connect} from "react-redux";
 import "./users.scss"
@@ -105,7 +105,8 @@ class User extends React.Component {
       .then((response) => response.json())
       .then((json) => {
         const url = `/storage${json.data.getUrl.imageUrl}`;
-        this.changeImage(url);      })
+        this.changeImage(url);
+      })
     .catch((error) => {
     console.error('Error:', error);
     });
