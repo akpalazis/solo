@@ -11,6 +11,9 @@ from db.models import associate_trip_with_discussion
 from db.models import db
 from helpers.app_helpers import socket_io
 from helpers.db_helper import is_user_trip_exists
+from user_profile_tools.views import download_flag_to_s3
+from user_profile_tools.views import fetch_flag_from_s3
+from user_profile_tools.views import is_flag_exists
 
 trips_blueprint = Blueprint('trips_blueprint', __name__)
 
@@ -109,3 +112,15 @@ def get_user_trips():
             }
         )
     return jsonify(json_list=total)
+
+
+@trips_blueprint.route("/getFlag/<string:country>", methods=['GET'])
+@login_required
+def get_country_flag(country):
+    if is_flag_exists(country):
+        flag = fetch_flag_from_s3(country)
+        return {"Url": flag}
+    else:
+        download_flag_to_s3(country)
+        flag = fetch_flag_from_s3(country)
+        return {"Url": flag}

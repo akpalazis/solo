@@ -11,8 +11,9 @@ sleep 5
 mc config host add myminio http://localhost:9001 admin password
 mc cp ./imgs/blank_profile_picture.png myminio/users
 sleep 5
-npm --prefix ./frontend/ run dev &
 /Users/Palazis/PycharmProjects/solo/venv/bin/python /Users/Palazis/PycharmProjects/solo/backend/app.py
+sleep 5
+npm --prefix ./frontend/ run dev &
 
 cleanup() {
   # Stop PostgreSQL
